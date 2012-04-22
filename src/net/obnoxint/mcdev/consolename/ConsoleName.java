@@ -24,7 +24,7 @@ public final class ConsoleName extends JavaPlugin {
 		@EventHandler
 		public void onServerCommand(ServerCommandEvent event) {
 			String cmd = event.getCommand();
-			if (cmd.startsWith("say ") && plugin.isOverrideSayCommand()) {
+			if ((cmd.startsWith("say") || cmd.startsWith("/say")) && plugin.isOverrideSayCommand()) {
 				cmd = COMMAND_BROADCAST + " " + cmd.substring(4);
 				event.setCommand(cmd);
 			}
