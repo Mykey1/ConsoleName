@@ -59,12 +59,13 @@ public final class ConsoleName extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if ((!(sender instanceof Player)) && (command.getName().equalsIgnoreCase("t")) && args.length > 0) {
+		if (command.getName().equalsIgnoreCase(COMMAND_BROADCAST) && args.length > 0) {
 			String s = "";
 			for (int i = 0; i < args.length; i++) {
 				s = s + " " + args[i];
 			}
 			getServer().broadcastMessage(getPrefix() + s);
+			return true;
 		}
 		return false;
 	}
