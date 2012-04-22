@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,9 +23,18 @@ public final class ConsoleName extends JavaPlugin {
 		}
 
 		@EventHandler
+		public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+			String msg = event.getMessage();
+			if (msg.startsWith("/say") && plugin.isOverrideSayCommand()) {
+				msg = "/" + COMMAND_BROADCAST + " " + msg.substring(5);
+				event.setMessage(msg);
+			}
+		}
+
+		@EventHandler
 		public void onServerCommand(ServerCommandEvent event) {
 			String cmd = event.getCommand();
-			if ((cmd.startsWith("say") || cmd.startsWith("/say")) && plugin.isOverrideSayCommand()) {
+			if (cmd.startsWith("say") && plugin.isOverrideSayCommand()) {
 				cmd = COMMAND_BROADCAST + " " + cmd.substring(4);
 				event.setCommand(cmd);
 			}
