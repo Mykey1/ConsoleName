@@ -58,10 +58,16 @@ public final class ConsoleName extends JavaPlugin {
 
 	private String prefix;
 
+	/**
+	 * @return The broadcast prefix.
+	 */
 	public String getPrefix() {
 		return prefix;
 	}
 
+	/**
+	 * @return true if the 'say' command is being overriden by the 'bc' command.
+	 */
 	public boolean isOverrideSayCommand() {
 		return overrideSayCommand;
 	}
@@ -91,10 +97,20 @@ public final class ConsoleName extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
 	}
 
+	/**
+	 * Enables or disables the plugins function to override the 'say' command.
+	 * 
+	 * @param overrideSayCommand true if the 'say' command should be overridden.
+	 */
 	public void setOverrideSayCommand(boolean overrideSayCommand) {
 		this.overrideSayCommand = overrideSayCommand;
 	}
 
+	/**
+	 * Sets the broadcast prefix.
+	 * 
+	 * @param prefix The broadcast prefix. May contain chat format codes.
+	 */
 	public void setPrefix(String prefix) {
 		if (prefix != null && !prefix.isEmpty()) {
 			this.prefix = prefix;
