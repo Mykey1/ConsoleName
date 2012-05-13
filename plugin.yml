@@ -1,10 +1,12 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 0.6
+version: 0.7
 author: obnoxint
-#former author: dbizzle
 commands:
     bc:
         description: send a broadcast message
         usage: /<command> [message]
         permission: commandname.broadcast
+    bcc:
+        description: send a broadcast message with customized prefix
+        usage: /<command> --pre=[prefix] --msg=[message]
