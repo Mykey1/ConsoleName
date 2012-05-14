@@ -16,6 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ConsoleName extends JavaPlugin {
@@ -50,9 +52,14 @@ public final class ConsoleName extends JavaPlugin {
 
     public static final String COMMAND_BROADCAST = "bc";
     public static final String COMMAND_BROADCAST_CUSTOM = "bcc";
-
     public static final String COMMAND_BROADCAST_CUSTOM_ARG_MSG = "--msg=";
     public static final String COMMAND_BROADCAST_CUSTOM_ARG_PRE = "--pre=";
+    public static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
+    
+    public static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
+    public static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
+    public static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
+    
     private static final boolean CONFIG_OVERRIDESAYCOMMAND_DEFAULT = false;
     private static final String CONFIG_OVERRIDESAYCOMMAND_PATH = "overrideSayCommand";
     private static final String CONFIG_PERPLAYERPREFIX_PATH = "perPlayer";
@@ -62,7 +69,7 @@ public final class ConsoleName extends JavaPlugin {
     /**
      * Sends a broadcast message.
      * 
-     * @param prefix the prefix. If null or an empty String is given the default prefix (see: CONFIG_PREFIX_DEFAULT) will be used. 
+     * @param prefix the prefix. If null or an empty String is given the default prefix (see: CONFIG_PREFIX_DEFAULT) will be used.
      * @param message the message. Must not be null or empty.
      */
     public static void sendBroadcastMessage(String prefix, String message) {
@@ -130,7 +137,8 @@ public final class ConsoleName extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String pre;
         String msg;
-        if (command.getName().equalsIgnoreCase(COMMAND_BROADCAST) && args.length > 0) {
+        String cmd = command.getName().toLowerCase();
+        if (cmd.equals(COMMAND_BROADCAST) && args.length > 0) {
             pre = (sender instanceof Player) ? getPrefix((Player) sender) : getPrefix();
             msg = "";
             for (int i = 0; i < args.length; i++) {
@@ -138,12 +146,50 @@ public final class ConsoleName extends JavaPlugin {
             }
             sendBroadcastMessage(pre, msg);
             return true;
-        } else if (command.getName().equalsIgnoreCase(COMMAND_BROADCAST_CUSTOM) && args.length >= 2
+        } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2
                 && (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender)) {
             String[] split = parseBCCCommandArgs(args);
             if (split != null) {
                 sendBroadcastMessage(split[0], split[1]);
                 return true;
+            }
+        } else if (cmd.equals(COMMAND_BROADCAST_SETPREFIX)) {
+            if (args.length == 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+                resetDefaultPrefix(sender, null);
+                return true;
+            } else {
+                if (args[0].equals("~") && sender instanceof Player && ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
+                    Player player = (Player) sender;
+                    if (args.length == 1) {
+                        setPrefix(player, null);
+                        player.sendMessage("Your personal broadcast prefix has been removed.");
+                    } else {
+                        pre = "";
+                        for (int i = 1; i < args.length; i++) {
+                            pre += args[i] + " ";
+                        }
+                        pre = pre.trim();
+                        setPrefix(player, pre);
+                        player.sendMessage("Your personal broadcast prefix has been set to: " + pre);
+                    }
+                    return true;
+                } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
+                    String targetPlayer = args[0].substring(1).trim();
+                    if (!targetPlayer.isEmpty()) {
+                        if (args.length == 1) {
+                            resetDefaultPrefix(sender, targetPlayer);
+                        } else {
+                            pre = "";
+                            for (int i = 1; i < args.length; i++) {
+                                pre += args[i] + " ";
+                            }
+                            pre = pre.trim();
+                            setPrefix(targetPlayer, pre);
+                            sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + pre);
+                        }
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -160,7 +206,8 @@ public final class ConsoleName extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
 
         if (startMetrics()) {
-            getLogger().info(getDescription().getName() + " v" + getDescription().getVersion() + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/53449/ for more information.");
+            getLogger().info(getDescription().getName() + " v" + getDescription().getVersion()
+                    + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/53449/ for more information.");
         }
     }
 
@@ -174,10 +221,10 @@ public final class ConsoleName extends JavaPlugin {
     }
 
     /**
-     * Sets the broadcast prefix for a broadcast message of a particular player.
+     * Sets or removes the broadcast prefix for a broadcast message of a particular player.
      * 
      * @param player the player.
-     * @param prefix the broadcast prefix.
+     * @param prefix the broadcast prefix. If null or an empty String is given, the personalized prefix will be removed.
      */
     public void setPrefix(Player player, String prefix) {
         if (player != null) {
@@ -213,6 +260,18 @@ public final class ConsoleName extends JavaPlugin {
                 setPrefix(s, sec.getString(s));
             }
         }
+    }
+
+    private void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
+        String msg;
+        if (targetPlayer == null) {
+            setPrefix(CONFIG_PREFIX_DEFAULT);
+            msg = "Broadcast prefix reset to: " + CONFIG_PREFIX_DEFAULT;
+        } else {
+            setPrefix(targetPlayer, null);
+            msg = "Broadcast prefix of player " + targetPlayer + " removed.";
+        }
+        sender.sendMessage(msg);
     }
 
     private void saveConfigFile() {
