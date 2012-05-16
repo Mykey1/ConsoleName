@@ -56,6 +56,7 @@ public final class ConsoleName extends JavaPlugin {
     public static final String COMMAND_BROADCAST_CUSTOM_ARG_PRE = "--pre=";
     public static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
 
+    public static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
@@ -146,8 +147,7 @@ public final class ConsoleName extends JavaPlugin {
             }
             sendBroadcastMessage(pre, msg);
             return true;
-        } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2
-                && (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender)) {
+        } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
             String[] split = parseBCCCommandArgs(args);
             if (split != null) {
                 sendBroadcastMessage(split[0], split[1]);
