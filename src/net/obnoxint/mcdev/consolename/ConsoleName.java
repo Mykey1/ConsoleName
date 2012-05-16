@@ -55,11 +55,11 @@ public final class ConsoleName extends JavaPlugin {
     public static final String COMMAND_BROADCAST_CUSTOM_ARG_MSG = "--msg=";
     public static final String COMMAND_BROADCAST_CUSTOM_ARG_PRE = "--pre=";
     public static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
-    
+
     public static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
-    
+
     private static final boolean CONFIG_OVERRIDESAYCOMMAND_DEFAULT = false;
     private static final String CONFIG_OVERRIDESAYCOMMAND_PATH = "overrideSayCommand";
     private static final String CONFIG_PERPLAYERPREFIX_PATH = "perPlayer";
@@ -189,6 +189,15 @@ public final class ConsoleName extends JavaPlugin {
                         }
                         return true;
                     }
+                } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+                    pre = "";
+                    for (int i = 0; i < args.length; i++) {
+                        pre += args[i] + " ";
+                    }
+                    pre = pre.trim();
+                    setPrefix(pre);
+                    sender.sendMessage("Broadcast prefix set to: " + pre);
+                    return true;
                 }
             }
         }

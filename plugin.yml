@@ -1,6 +1,6 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 0.8
+version: 0.9
 author: obnoxint
 commands:
     bc:
