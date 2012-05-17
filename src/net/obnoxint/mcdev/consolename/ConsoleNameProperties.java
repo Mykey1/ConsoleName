@@ -21,7 +21,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
     private String prefix = PROPERTY_PREFIX_DEFAULT;
     private HashMap<String, String> prefixes = new HashMap<>();
 
-    public ConsoleNameProperties(ConsoleName feature) {
+    ConsoleNameProperties(ConsoleName feature) {
         super(feature);
     }
 

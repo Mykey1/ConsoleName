@@ -6,58 +6,17 @@ import java.io.IOException;
 import net.obnoxint.mcdev.feature.Feature;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ConsoleName extends JavaPlugin implements Feature {
 
-    public static class ConsoleNameListener implements Listener {
+    private static ConsoleName instance = null;
 
-        private final ConsoleName plugin;
-
-        public ConsoleNameListener(ConsoleName plugin) {
-            this.plugin = plugin;
-        }
-
-        @EventHandler
-        public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-            String msg = event.getMessage();
-            if (msg.startsWith("/say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
-                msg = "/" + COMMAND_BROADCAST + " " + msg.substring(5);
-                event.setMessage(msg);
-            }
-        }
-
-        @EventHandler
-        public void onServerCommand(ServerCommandEvent event) {
-            String cmd = event.getCommand();
-            if (cmd.startsWith("say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
-                cmd = COMMAND_BROADCAST + " " + cmd.substring(4);
-                event.setCommand(cmd);
-            }
-        }
-
-    } // End of ConsoleNameListener
-
-    public static final String COMMAND_BROADCAST = "bc";
-    public static final String COMMAND_BROADCAST_CUSTOM = "bcc";
-    public static final String COMMAND_BROADCAST_CUSTOM_ARG_MSG = "--msg=";
-    public static final String COMMAND_BROADCAST_CUSTOM_ARG_PRE = "--pre=";
-    public static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
-
-    public static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);
-    public static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
-    public static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
-    public static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
+    public static ConsoleName getInstance() {
+        return instance;
+    }
 
     /**
      * Sends a broadcast message.
@@ -66,28 +25,27 @@ public final class ConsoleName extends JavaPlugin implements Feature {
      * @param message the message. Must not be null or empty.
      */
     public static void sendBroadcastMessage(String prefix, String message) {
-        if (message != null && !message.trim().isEmpty()) {
-            String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
-            String m = message.trim();
-            Bukkit.getServer().broadcastMessage(p + " " + m);
+        if (getInstance().isFeatureActive()) {
+            if (message != null && !message.trim().isEmpty()) {
+                String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
+                String m = message.trim();
+                Bukkit.getServer().broadcastMessage(p + " " + m);
+            }
+        } else {
+            getInstance().getLogger().info("Tried sending broadcast but feature is inactiv.");
         }
     }
 
-    private static String[] parseBCCCommandArgs(String[] args) {
-        String line = "";
-        String[] r;
-        for (String s : args) {
-            line += " " + s;
+    private static void setInstance(ConsoleName instance) {
+        if (ConsoleName.instance == null && instance != null) {
+            ConsoleName.instance = instance;
         }
-        line = line.trim();
-        if (line.startsWith(COMMAND_BROADCAST_CUSTOM_ARG_PRE)) {
-            line = line.substring(COMMAND_BROADCAST_CUSTOM_ARG_PRE.length());
-            r = line.split(COMMAND_BROADCAST_CUSTOM_ARG_MSG);
-            if (r.length == 2) {
-                return r;
-            }
+    }
+
+    private static void unsetInstance() {
+        if (instance != null) {
+            instance = null;
         }
-        return null;
     }
 
     private boolean active = false;
@@ -133,89 +91,21 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (isFeatureActive()) {
-            String pre;
-            String msg;
-            String cmd = command.getName().toLowerCase();
-            ConsoleNameProperties prop = getFeatureProperties();
-            if (cmd.equals(COMMAND_BROADCAST) && args.length > 0) {
-                pre = (sender instanceof Player) ? prop.getPrefix((Player) sender) : prop.getPrefix();
-                msg = "";
-                for (int i = 0; i < args.length; i++) {
-                    msg = msg + " " + args[i];
-                }
-                sendBroadcastMessage(pre, msg);
-                return true;
-            } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2
-                    && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
-                String[] split = parseBCCCommandArgs(args);
-                if (split != null) {
-                    sendBroadcastMessage(split[0], split[1]);
-                    return true;
-                }
-            } else if (cmd.equals(COMMAND_BROADCAST_SETPREFIX)) {
-                if (args.length == 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
-                    resetDefaultPrefix(sender, null);
-                    return true;
-                } else {
-                    if (args[0].equals("~") && sender instanceof Player && ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
-                        Player player = (Player) sender;
-                        if (args.length == 1) {
-                            prop.setPrefix(player, null);
-                            player.sendMessage("Your personal broadcast prefix has been removed.");
-                        } else {
-                            pre = "";
-                            for (int i = 1; i < args.length; i++) {
-                                pre += args[i] + " ";
-                            }
-                            pre = pre.trim();
-                            prop.setPrefix(player, pre);
-                            player.sendMessage("Your personal broadcast prefix has been set to: " + pre);
-                        }
-                        return true;
-                    } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
-                        String targetPlayer = args[0].substring(1).trim();
-                        if (!targetPlayer.isEmpty()) {
-                            if (args.length == 1) {
-                                resetDefaultPrefix(sender, targetPlayer);
-                            } else {
-                                pre = "";
-                                for (int i = 1; i < args.length; i++) {
-                                    pre += args[i] + " ";
-                                }
-                                pre = pre.trim();
-                                prop.setPrefix(targetPlayer, pre);
-                                sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + pre);
-                            }
-                            return true;
-                        }
-                    } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
-                        pre = "";
-                        for (int i = 0; i < args.length; i++) {
-                            pre += args[i] + " ";
-                        }
-                        pre = pre.trim();
-                        prop.setPrefix(pre);
-                        sender.sendMessage("Broadcast prefix set to: " + pre);
-                        return true;
-                    }
-                }
-            }
-        } else {
-            getLogger().info("Tried command " + command.getName() + " but " + getFeatureName() + " is inactive.");
-        }
-        return false;
-    }
-
-    @Override
     public void onDisable() {
         setFeatureActive(false);
+        unsetInstance();
     }
 
     @Override
     public void onEnable() {
+        setInstance(this);
+
         getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
+
+        getCommand(ConsoleNameCommandExecutor.COMMAND_BROADCAST).setExecutor(new ConsoleNameBCCommandExecutor(this));
+        getCommand(ConsoleNameCommandExecutor.COMMAND_BROADCAST_CUSTOM).setExecutor(new ConsoleNameBCCCommandExecutor(this));
+        getCommand(ConsoleNameCommandExecutor.COMMAND_BROADCAST_SETPREFIX).setExecutor(new ConsoleNameBCSetCommandExecutor(this));
+
         setFeatureActive(true);
 
         if (startMetrics()) {
@@ -236,7 +126,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         }
     }
 
-    private void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
+    void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
         String msg;
         if (targetPlayer == null) {
             getFeatureProperties().setPrefix(ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT);
