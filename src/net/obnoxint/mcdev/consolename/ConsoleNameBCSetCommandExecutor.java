@@ -30,7 +30,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                     }
                     pre = pre.trim();
                     prop.setPrefix(player, pre);
-                    player.sendMessage("Your personal broadcast prefix has been set to: " + pre);
+                    player.sendMessage("Your personal broadcast prefix has been set to: " + getPlugin().getFeatureProperties().getPrefix(player));
                 }
                 return true;
             } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
@@ -45,7 +45,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                         }
                         pre = pre.trim();
                         prop.setPrefix(targetPlayer, pre);
-                        sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + pre);
+                        sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + getPlugin().getFeatureProperties().getPrefix(targetPlayer));
                     }
                     return true;
                 }

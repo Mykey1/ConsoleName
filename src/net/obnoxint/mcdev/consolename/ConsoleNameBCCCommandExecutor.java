@@ -32,6 +32,8 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
         if (args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
             String[] split = parseBCCCommandArgs(args);
             if (split != null) {
+                split[0] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[0]);
+                split[1] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[1]);
                 ConsoleName.sendBroadcastMessage(split[0], split[1]);
                 return true;
             }

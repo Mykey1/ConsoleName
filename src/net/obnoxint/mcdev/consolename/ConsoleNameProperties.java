@@ -11,12 +11,14 @@ public final class ConsoleNameProperties extends FeatureProperties {
 
     public static final String PROPERTY_CHATFORMATSYMBOL_DEFAULT = "&";
     public static final String PROPERTY_PREFIX_DEFAULT = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[Console]" + ChatColor.RESET.toString() + ":";
+
+    private static final String CHAT_FORMAT_SYMBOL = "§";
     private static final String PROPERTY_CHATFORMATSYMBOL_NAME = "chatFormatSymbol";
     private static final String PROPERTY_OVERRIDESAYCOMMAND_NAME = "overrideSayCommand";
     private static final String PROPERTY_PERPLAYER_NAME_PREFIX = "player_";
     private static final String PROPERTY_PREFIX_NAME = "prefix";
-
     private String chatFormatSymbol = PROPERTY_CHATFORMATSYMBOL_DEFAULT;
+
     private boolean overrideSayCommand = false;
     private String prefix = PROPERTY_PREFIX_DEFAULT;
     private HashMap<String, String> prefixes = new HashMap<>();
@@ -43,7 +45,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
     public String getPrefix(Player player) {
         String r = null;
         if (player != null) {
-            r = prefixes.get(player.getName());
+            r = getPrefix(player.getName());
         }
         return (r == null) ? prefix : r;
     }
@@ -99,7 +101,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
      */
     public void setPrefix(String prefix) {
         if (prefix != null && !prefix.isEmpty()) {
-            this.prefix = prefix;
+            this.prefix = replaceChatFormatSymbol(prefix);
             setDirty();
         }
     }
@@ -140,11 +142,19 @@ public final class ConsoleNameProperties extends FeatureProperties {
         }
     }
 
+    String getPrefix(String playerName) {
+        return prefixes.get(playerName);
+    }
+
+    String replaceChatFormatSymbol(String string) {
+        return string.replaceAll(getChatFormatSymbol(), CHAT_FORMAT_SYMBOL);
+    }
+
     void setPrefix(String playerName, String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             prefixes.remove(playerName);
         } else {
-            prefixes.put(playerName, prefix);
+            prefixes.put(playerName, replaceChatFormatSymbol(prefix));
         }
         setDirty();
     }
