@@ -1,16 +1,12 @@
 package net.obnoxint.mcdev.consolename;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+
+import net.obnoxint.mcdev.feature.Feature;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.RemoteConsoleCommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,9 +14,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class ConsoleName extends JavaPlugin {
+public final class ConsoleName extends JavaPlugin implements Feature {
 
     public static class ConsoleNameListener implements Listener {
 
@@ -33,7 +30,7 @@ public final class ConsoleName extends JavaPlugin {
         @EventHandler
         public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
             String msg = event.getMessage();
-            if (msg.startsWith("/say") && plugin.isOverrideSayCommand()) {
+            if (msg.startsWith("/say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
                 msg = "/" + COMMAND_BROADCAST + " " + msg.substring(5);
                 event.setMessage(msg);
             }
@@ -42,7 +39,7 @@ public final class ConsoleName extends JavaPlugin {
         @EventHandler
         public void onServerCommand(ServerCommandEvent event) {
             String cmd = event.getCommand();
-            if (cmd.startsWith("say") && plugin.isOverrideSayCommand()) {
+            if (cmd.startsWith("say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
                 cmd = COMMAND_BROADCAST + " " + cmd.substring(4);
                 event.setCommand(cmd);
             }
@@ -61,12 +58,6 @@ public final class ConsoleName extends JavaPlugin {
     public static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
     public static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
 
-    private static final boolean CONFIG_OVERRIDESAYCOMMAND_DEFAULT = false;
-    private static final String CONFIG_OVERRIDESAYCOMMAND_PATH = "overrideSayCommand";
-    private static final String CONFIG_PERPLAYERPREFIX_PATH = "perPlayer";
-    private static final String CONFIG_PREFIX_DEFAULT = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[Console]" + ChatColor.RESET.toString() + ":";
-    private static final String CONFIG_PREFIX_PATH = "prefix";
-
     /**
      * Sends a broadcast message.
      * 
@@ -75,7 +66,7 @@ public final class ConsoleName extends JavaPlugin {
      */
     public static void sendBroadcastMessage(String prefix, String message) {
         if (message != null && !message.trim().isEmpty()) {
-            String p = (prefix == null || prefix.trim().isEmpty()) ? CONFIG_PREFIX_DEFAULT : prefix.trim();
+            String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
             String m = message.trim();
             Bukkit.getServer().broadcastMessage(p + " " + m);
         }
@@ -98,121 +89,120 @@ public final class ConsoleName extends JavaPlugin {
         return null;
     }
 
-    private File configFile = null;
+    private boolean active = false;
 
     private Metrics metrics;
 
-    private boolean overrideSayCommand;
+    private ConsoleNameProperties properties = null;
 
-    private String prefix;
-
-    private HashMap<String, String> prefixes = new HashMap<>();
-
-    /**
-     * @return The broadcast prefix.
-     */
-    public String getPrefix() {
-        return prefix;
+    @Override
+    public String getFeatureName() {
+        return getDescription().getName();
     }
 
-    /**
-     * @param player The player.
-     * @return The broadcast prefix of the given player.
-     */
-    public String getPrefix(Player player) {
-        String r = null;
-        if (player != null) {
-            r = prefixes.get(player.getName());
+    @Override
+    public Plugin getFeaturePlugin() {
+        return this;
+    }
+
+    @Override
+    public ConsoleNameProperties getFeatureProperties() {
+        if (properties == null) {
+            properties = new ConsoleNameProperties(this);
         }
-        return (r == null) ? prefix : r;
+        return properties;
     }
 
-    /**
-     * @return true if the 'say' command is being overriden by the 'bc' command.
-     */
-    public boolean isOverrideSayCommand() {
-        return overrideSayCommand;
+    @Override
+    public boolean isFeatureActive() {
+        return active;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String pre;
-        String msg;
-        String cmd = command.getName().toLowerCase();
-        if (cmd.equals(COMMAND_BROADCAST) && args.length > 0) {
-            pre = (sender instanceof Player) ? getPrefix((Player) sender) : getPrefix();
-            msg = "";
-            for (int i = 0; i < args.length; i++) {
-                msg = msg + " " + args[i];
-            }
-            sendBroadcastMessage(pre, msg);
-            return true;
-        } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
-            String[] split = parseBCCCommandArgs(args);
-            if (split != null) {
-                sendBroadcastMessage(split[0], split[1]);
+        if (isFeatureActive()){
+            String pre;
+            String msg;
+            String cmd = command.getName().toLowerCase();
+            ConsoleNameProperties prop = getFeatureProperties();
+            if (cmd.equals(COMMAND_BROADCAST) && args.length > 0) {
+                pre = (sender instanceof Player) ? prop.getPrefix((Player) sender) : prop.getPrefix();
+                msg = "";
+                for (int i = 0; i < args.length; i++) {
+                    msg = msg + " " + args[i];
+                }
+                sendBroadcastMessage(pre, msg);
                 return true;
-            }
-        } else if (cmd.equals(COMMAND_BROADCAST_SETPREFIX)) {
-            if (args.length == 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
-                resetDefaultPrefix(sender, null);
-                return true;
-            } else {
-                if (args[0].equals("~") && sender instanceof Player && ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
-                    Player player = (Player) sender;
-                    if (args.length == 1) {
-                        setPrefix(player, null);
-                        player.sendMessage("Your personal broadcast prefix has been removed.");
-                    } else {
-                        pre = "";
-                        for (int i = 1; i < args.length; i++) {
-                            pre += args[i] + " ";
-                        }
-                        pre = pre.trim();
-                        setPrefix(player, pre);
-                        player.sendMessage("Your personal broadcast prefix has been set to: " + pre);
-                    }
+            } else if (cmd.equals(COMMAND_BROADCAST_CUSTOM) && args.length >= 2
+                    && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
+                String[] split = parseBCCCommandArgs(args);
+                if (split != null) {
+                    sendBroadcastMessage(split[0], split[1]);
                     return true;
-                } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
-                    String targetPlayer = args[0].substring(1).trim();
-                    if (!targetPlayer.isEmpty()) {
+                }
+            } else if (cmd.equals(COMMAND_BROADCAST_SETPREFIX)) {
+                if (args.length == 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+                    resetDefaultPrefix(sender, null);
+                    return true;
+                } else {
+                    if (args[0].equals("~") && sender instanceof Player && ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
+                        Player player = (Player) sender;
                         if (args.length == 1) {
-                            resetDefaultPrefix(sender, targetPlayer);
+                            prop.setPrefix(player, null);
+                            player.sendMessage("Your personal broadcast prefix has been removed.");
                         } else {
                             pre = "";
                             for (int i = 1; i < args.length; i++) {
                                 pre += args[i] + " ";
                             }
                             pre = pre.trim();
-                            setPrefix(targetPlayer, pre);
-                            sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + pre);
+                            prop.setPrefix(player, pre);
+                            player.sendMessage("Your personal broadcast prefix has been set to: " + pre);
                         }
                         return true;
+                    } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
+                        String targetPlayer = args[0].substring(1).trim();
+                        if (!targetPlayer.isEmpty()) {
+                            if (args.length == 1) {
+                                resetDefaultPrefix(sender, targetPlayer);
+                            } else {
+                                pre = "";
+                                for (int i = 1; i < args.length; i++) {
+                                    pre += args[i] + " ";
+                                }
+                                pre = pre.trim();
+                                prop.setPrefix(targetPlayer, pre);
+                                sender.sendMessage("Broadcast prefix of " + targetPlayer + " has been set to: " + pre);
+                            }
+                            return true;
+                        }
+                    } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+                        pre = "";
+                        for (int i = 0; i < args.length; i++) {
+                            pre += args[i] + " ";
+                        }
+                        pre = pre.trim();
+                        prop.setPrefix(pre);
+                        sender.sendMessage("Broadcast prefix set to: " + pre);
+                        return true;
                     }
-                } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
-                    pre = "";
-                    for (int i = 0; i < args.length; i++) {
-                        pre += args[i] + " ";
-                    }
-                    pre = pre.trim();
-                    setPrefix(pre);
-                    sender.sendMessage("Broadcast prefix set to: " + pre);
-                    return true;
                 }
             }
+        } else {
+            getLogger().info("Tried command " + command.getName() + " but " + getFeatureName() + " is inactive.");
         }
         return false;
     }
 
     @Override
     public void onDisable() {
-        saveConfigFile();
+        setFeatureActive(false);
     }
 
     @Override
     public void onEnable() {
-        loadConfigFile();
         getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
+        setFeatureActive(true);
 
         if (startMetrics()) {
             getLogger().info(getDescription().getName() + " v" + getDescription().getVersion()
@@ -220,86 +210,28 @@ public final class ConsoleName extends JavaPlugin {
         }
     }
 
-    /**
-     * Enables or disables the plugins function to override the 'say' command.
-     * 
-     * @param overrideSayCommand true if the 'say' command should be overridden.
-     */
-    public void setOverrideSayCommand(boolean overrideSayCommand) {
-        this.overrideSayCommand = overrideSayCommand;
-    }
-
-    /**
-     * Sets or removes the broadcast prefix for a broadcast message of a particular player.
-     * 
-     * @param player the player.
-     * @param prefix the broadcast prefix. If null or an empty String is given, the personalized prefix will be removed.
-     */
-    public void setPrefix(Player player, String prefix) {
-        if (player != null) {
-            setPrefix(player.getName(), prefix);
-        }
-    }
-
-    /**
-     * Sets the broadcast prefix.
-     * 
-     * @param prefix The broadcast prefix. May contain chat format codes.
-     */
-    public void setPrefix(String prefix) {
-        if (prefix != null && !prefix.isEmpty()) {
-            this.prefix = prefix;
-        }
-    }
-
-    private File getConfigFile() {
-        if (configFile == null) {
-            configFile = new File(getDataFolder(), "config.yml");
-        }
-        return configFile;
-    }
-
-    private void loadConfigFile() {
-        setPrefix(getConfig().getString(CONFIG_PREFIX_PATH, CONFIG_PREFIX_DEFAULT));
-        setOverrideSayCommand(getConfig().getBoolean(CONFIG_OVERRIDESAYCOMMAND_PATH, CONFIG_OVERRIDESAYCOMMAND_DEFAULT));
-        ConfigurationSection sec = getConfig().getConfigurationSection(CONFIG_PERPLAYERPREFIX_PATH);
-        if (sec != null) {
-            prefixes.clear();
-            for (String s : sec.getKeys(false)) {
-                setPrefix(s, sec.getString(s));
+    @Override
+    public void setFeatureActive(boolean active) {
+        if (this.active != active) {
+            if (active) {
+                getFeatureProperties().loadProperties();
+            } else {
+                getFeatureProperties().storeProperties();
             }
+            this.active = active;
         }
     }
 
     private void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
         String msg;
         if (targetPlayer == null) {
-            setPrefix(CONFIG_PREFIX_DEFAULT);
-            msg = "Broadcast prefix reset to: " + CONFIG_PREFIX_DEFAULT;
+            getFeatureProperties().setPrefix(ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT);
+            msg = "Broadcast prefix reset to: " + ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT;
         } else {
-            setPrefix(targetPlayer, null);
+            getFeatureProperties().setPrefix(targetPlayer, null);
             msg = "Broadcast prefix of player " + targetPlayer + " removed.";
         }
         sender.sendMessage(msg);
-    }
-
-    private void saveConfigFile() {
-        getConfig().set(CONFIG_PREFIX_PATH, prefix);
-        getConfig().set(CONFIG_OVERRIDESAYCOMMAND_PATH, overrideSayCommand);
-        getConfig().createSection(CONFIG_PERPLAYERPREFIX_PATH, prefixes);
-        try {
-            getConfig().save(getConfigFile());
-        } catch (IOException e) {
-            getLogger().severe(getDescription().getName() + " failed to save the configuration file.");
-        }
-    }
-
-    private void setPrefix(String playerName, String prefix) {
-        if (prefix == null || prefix.isEmpty()) {
-            prefixes.remove(playerName);
-        } else {
-            prefixes.put(playerName, prefix);
-        }
     }
 
     private boolean startMetrics() {
