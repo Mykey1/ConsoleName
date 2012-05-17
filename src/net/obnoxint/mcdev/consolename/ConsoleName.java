@@ -1,5 +1,6 @@
 package net.obnoxint.mcdev.consolename;
 
+import java.io.File;
 import java.io.IOException;
 
 import net.obnoxint.mcdev.feature.Feature;
@@ -91,9 +92,22 @@ public final class ConsoleName extends JavaPlugin implements Feature {
 
     private boolean active = false;
 
+    private File dataFolder = null;
+
     private Metrics metrics;
 
     private ConsoleNameProperties properties = null;
+
+    @Override
+    public File getDataFolder() {
+        if (dataFolder == null) {
+            dataFolder = super.getDataFolder();
+            if (!dataFolder.exists()) {
+                dataFolder.mkdirs();
+            }
+        }
+        return dataFolder;
+    }
 
     @Override
     public String getFeatureName() {
@@ -120,7 +134,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (isFeatureActive()){
+        if (isFeatureActive()) {
             String pre;
             String msg;
             String cmd = command.getName().toLowerCase();
