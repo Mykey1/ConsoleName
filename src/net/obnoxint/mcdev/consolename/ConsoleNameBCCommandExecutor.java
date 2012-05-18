@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
 
-    protected ConsoleNameBCCommandExecutor(ConsoleName plugin) {
+    ConsoleNameBCCommandExecutor(ConsoleName plugin) {
         super(plugin);
     }
 

@@ -15,9 +15,11 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
         String pre;
         ConsoleNameProperties prop = getPlugin().getFeatureProperties();
         if (args.length == 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+            // reset global prefix (no arguments)
             getPlugin().resetDefaultPrefix(sender, null);
             return true;
         } else {
+            // set or reset own per-player prefix (first argument is ~)
             if (args[0].equals("~") && sender instanceof Player && ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
                 Player player = (Player) sender;
                 if (args.length == 1) {
@@ -32,8 +34,9 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                     prop.setPrefix(player, pre);
                     player.sendMessage("Your personal broadcast prefix has been set to: " + getPlugin().getFeatureProperties().getPrefix(player));
                 }
-                return true;
+                return true;            
             } else if (args[0].startsWith("@") && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
+                // set or reset per-player prefix of another player (first argument starts with @)
                 String targetPlayer = args[0].substring(1).trim();
                 if (!targetPlayer.isEmpty()) {
                     if (args.length == 1) {
@@ -50,6 +53,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                     return true;
                 }
             } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) {
+                // set global prefix (other cases) 
                 pre = "";
                 for (int i = 0; i < args.length; i++) {
                     pre += args[i] + " ";

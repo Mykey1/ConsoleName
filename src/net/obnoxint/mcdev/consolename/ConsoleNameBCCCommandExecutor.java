@@ -23,7 +23,7 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
         return null;
     }
 
-    protected ConsoleNameBCCCommandExecutor(ConsoleName plugin) {
+    ConsoleNameBCCCommandExecutor(ConsoleName plugin) {
         super(plugin);
     }
 
