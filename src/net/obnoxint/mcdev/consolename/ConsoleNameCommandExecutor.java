@@ -11,11 +11,13 @@ abstract class ConsoleNameCommandExecutor implements CommandExecutor {
     protected static final String COMMAND_BROADCAST_CUSTOM_ARG_MSG = "--msg=";
     protected static final String COMMAND_BROADCAST_CUSTOM_ARG_PRE = "--pre=";
     protected static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
+    protected static final String COMMAND_SETPROPERTY = "bcprop";
 
     protected static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);
     protected static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
     protected static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
     protected static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
+    protected static final Permission PERMISSION_SETPROPERTY = new Permission("consolename.setproperty", PermissionDefault.OP);
 
     private final ConsoleName plugin;
 

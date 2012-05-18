@@ -1,15 +1,17 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 0.13
+version: 1.0
 author: obnoxint
 commands:
     bc:
         description: send a broadcast message
         usage: /<command> [message]
-        permission: commandname.broadcast
     bcc:
         description: send a broadcast message with customized prefix
         usage: /<command> --pre=[prefix] --msg=[message]
     bcset:
         description: (re-)sets the broadcast message prefix either globally or per player
-        usage: /<command> ((@player)|~) [message]
+        usage: /<command> ([@player]|[~]) [message]
+    bcprop:
+        description: set ConsoleName properties
+        usage: /<command> [property] [value]
