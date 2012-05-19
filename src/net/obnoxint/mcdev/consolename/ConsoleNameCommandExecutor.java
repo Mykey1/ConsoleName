@@ -13,6 +13,7 @@ abstract class ConsoleNameCommandExecutor implements CommandExecutor {
     protected static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
     protected static final String COMMAND_SETPROPERTY = "bcprop";
 
+    protected static final Permission PERMISSION_SENDBROADCAST = new Permission("consolename.sendbroadcast", PermissionDefault.OP);
     protected static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);
     protected static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
     protected static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);

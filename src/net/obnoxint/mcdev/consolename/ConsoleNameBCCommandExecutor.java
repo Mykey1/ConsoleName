@@ -12,7 +12,7 @@ final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0) {
+        if (args.length > 0 && ((sender instanceof Player) ? ((Player)sender).hasPermission(PERMISSION_SENDBROADCAST) : true)) {
             String pre = (sender instanceof Player) ? getPlugin().getFeatureProperties().getPrefix((Player) sender) : getPlugin().getFeatureProperties().getPrefix();
             String msg = "";
             for (int i = 0; i < args.length; i++) {
