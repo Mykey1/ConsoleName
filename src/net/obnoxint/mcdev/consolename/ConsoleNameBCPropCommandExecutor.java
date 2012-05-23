@@ -58,6 +58,9 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                 }
                 return true;
             }
+        } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SETPROPERTY)) {
+            sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPROPERTY.getName());
+            return true;
         }
         return false;
     }
