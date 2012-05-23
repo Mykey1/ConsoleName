@@ -13,7 +13,7 @@ abstract class ConsoleNameCommandExecutor implements CommandExecutor {
     protected static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
     protected static final String COMMAND_SETPROPERTY = "bcprop";
 
-    protected static final String NO_PERMISSION_MSG = "You don't have the permission required in order to use this command: ";
+    protected static final String NO_PERMISSION_MSG = "You don't have the permission required in order to use this command: §o";
 
     protected static final Permission PERMISSION_SENDBROADCAST = new Permission("consolename.sendbroadcast", PermissionDefault.OP);
     protected static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);

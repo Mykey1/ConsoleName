@@ -18,7 +18,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
             if ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true) {
                 getPlugin().resetDefaultPrefix(sender, null);
             } else {
-                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL);
+                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL.getName());
             }
             return true;
         } else {
@@ -38,7 +38,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                         player.sendMessage("Your personal broadcast prefix has been set to: " + getPlugin().getFeatureProperties().getPrefix(player));
                     }
                 } else {
-                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OWN);
+                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OWN.getName());
                 }
                 return true;
             } else if (args[0].startsWith("@")) { // set or reset per-player prefix of another player (first argument starts with @)
@@ -59,7 +59,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                         return true;
                     }
                 } else {
-                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OTHER);
+                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OTHER.getName());
                     return true;
                 }
             } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) { // set global prefix (other cases)
@@ -72,7 +72,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                 sender.sendMessage("Broadcast prefix set to: " + pre);
                 return true;
             } else {
-                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL);
+                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL.getName());
                 return true;
             }
         }
