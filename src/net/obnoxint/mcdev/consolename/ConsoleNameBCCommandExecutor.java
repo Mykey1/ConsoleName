@@ -18,7 +18,7 @@ final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
             for (int i = 0; i < args.length; i++) {
                 msg = msg + " " + args[i];
             }
-            ConsoleName.sendBroadcastMessage(pre, msg);
+            ConsoleName.sendBroadcastMessage(pre, msg, sender);
             return true;
         } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SENDBROADCAST)) {
             sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SENDBROADCAST.getName());

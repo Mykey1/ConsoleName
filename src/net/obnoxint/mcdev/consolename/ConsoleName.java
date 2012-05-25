@@ -23,13 +23,17 @@ public final class ConsoleName extends JavaPlugin implements Feature {
      * 
      * @param prefix the prefix. If null or an empty String is given the default prefix (see: CONFIG_PREFIX_DEFAULT) will be used.
      * @param message the message. Must not be null or empty.
+     * @param sender the sender. If null is given no {@link BroadcastEvent} will be called.
      */
-    public static void sendBroadcastMessage(String prefix, String message) {
+    public static void sendBroadcastMessage(String prefix, String message, CommandSender sender) {
         if (getInstance().isFeatureActive()) {
             if (message != null && !message.trim().isEmpty()) {
                 String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
                 String m = message.trim();
                 Bukkit.getServer().broadcastMessage(p + " " + m);
+                if (sender != null) {
+                    Bukkit.getPluginManager().callEvent(new BroadcastEvent(prefix, message, sender));
+                }
             }
         } else {
             getInstance().getLogger().info("Tried sending broadcast but feature is inactiv.");

@@ -34,7 +34,7 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
             if (split != null) {
                 split[0] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[0]);
                 split[1] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[1]);
-                ConsoleName.sendBroadcastMessage(split[0], split[1]);
+                ConsoleName.sendBroadcastMessage(split[0], split[1], sender);
                 return true;
             }
         } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM)) {
