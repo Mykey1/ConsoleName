@@ -1,17 +1,13 @@
 package net.obnoxint.mcdev.consolename;
-/*
- * Copyright 2011 Tyler Blair. All rights reserved.
- *
+
+/* Copyright 2011 Tyler Blair. All rights reserved.
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
- *
- *    1. Redistributions of source code must retain the above copyright notice, this list of
- *       conditions and the following disclaimer.
- *
- *    2. Redistributions in binary form must reproduce the above copyright notice, this list
- *       of conditions and the following disclaimer in the documentation and/or other materials
- *       provided with the distribution.
- *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
+ * provided with the distribution.
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
@@ -21,11 +17,9 @@ package net.obnoxint.mcdev.consolename;
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  * The views and conclusions contained in the software and documentation are those of the
  * authors and contributors and should not be interpreted as representing official policies,
- * either expressed or implied, of anybody else.
- */
+ * either expressed or implied, of anybody else. */
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -64,7 +58,7 @@ import java.util.logging.Level;
  * void start(); <br/>
  * </code>
  */
-class Metrics {
+public class Metrics {
 
     /**
      * The current revision number
@@ -116,7 +110,7 @@ class Metrics {
      * The plugin configuration file
      */
     private final YamlConfiguration configuration;
-    
+
     /**
      * The plugin configuration file
      */
@@ -165,7 +159,7 @@ class Metrics {
     /**
      * Construct and create a Graph that can be used to separate specific plotters to their own graphs
      * on the metrics website. Plotters can be added to the graph object returned.
-     *
+     * 
      * @param name
      * @return Graph object created. Will never return NULL under normal circumstances unless bad parameters are given
      */
@@ -186,7 +180,7 @@ class Metrics {
 
     /**
      * Adds a custom data plotter to the default graph
-     *
+     * 
      * @param plotter
      */
     public void addCustomData(final Plotter plotter) {
@@ -205,7 +199,7 @@ class Metrics {
      * Start measuring statistics. This will immediately create an async repeating task as the plugin and send
      * the initial data to the metrics backend, and then after that it will post in increments of
      * PING_INTERVAL * 1200 ticks.
-     *
+     * 
      * @return True if statistics measuring is running, otherwise false.
      */
     public boolean start() {
@@ -256,11 +250,11 @@ class Metrics {
 
     /**
      * Has the server owner denied plugin metrics?
-     *
+     * 
      * @return
      */
     public boolean isOptOut() {
-        synchronized(optOutLock) {
+        synchronized (optOutLock) {
             try {
                 // Reload the metrics file
                 configuration.load(CONFIG_FILE);
@@ -276,29 +270,29 @@ class Metrics {
     }
 
     /**
-    * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
-    *
-    * @throws IOException
-    */
+     * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
+     * 
+     * @throws IOException
+     */
     public void enable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
         synchronized (optOutLock) {
-                // Check if the server owner has already set opt-out, if not, set it.
-                if (isOptOut()) {
-                        configuration.set("opt-out", false);
-                        configuration.save(configurationFile);
-                }
+            // Check if the server owner has already set opt-out, if not, set it.
+            if (isOptOut()) {
+                configuration.set("opt-out", false);
+                configuration.save(configurationFile);
+            }
 
-                // Enable Task, if it is not running
-                if (taskId < 0) {
-                        start();
-                }
+            // Enable Task, if it is not running
+            if (taskId < 0) {
+                start();
+            }
         }
     }
 
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
-     *
+     * 
      * @throws IOException
      */
     public void disable() throws IOException {
@@ -392,7 +386,7 @@ class Metrics {
         reader.close();
 
         if (response == null || response.startsWith("ERR")) {
-            throw new IOException(response); //Throw the exception
+            throw new IOException(response); // Throw the exception
         } else {
             // Is this the first update this hour?
             if (response.contains("OK This is your first update this hour")) {
@@ -413,7 +407,7 @@ class Metrics {
 
     /**
      * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
-     *
+     * 
      * @return
      */
     private boolean isMineshafterPresent() {
@@ -426,14 +420,15 @@ class Metrics {
     }
 
     /**
-     * <p>Encode a key/value data pair to be used in a HTTP post request. This INCLUDES a & so the first
-     * key/value pair MUST be included manually, e.g:</p>
+     * <p>
+     * Encode a key/value data pair to be used in a HTTP post request. This INCLUDES a & so the first key/value pair MUST be included manually, e.g:
+     * </p>
      * <code>
      * StringBuffer data = new StringBuffer();
      * data.append(encode("guid")).append('=').append(encode(guid));
      * encodeDataPair(data, "version", description.getVersion());
      * </code>
-     *
+     * 
      * @param buffer
      * @param key
      * @param value
@@ -445,7 +440,7 @@ class Metrics {
 
     /**
      * Encode text as UTF-8
-     *
+     * 
      * @param text
      * @return
      */
@@ -475,7 +470,7 @@ class Metrics {
 
         /**
          * Gets the graph's name
-         *
+         * 
          * @return
          */
         public String getName() {
@@ -484,7 +479,7 @@ class Metrics {
 
         /**
          * Add a plotter to the graph, which will be used to plot entries
-         *
+         * 
          * @param plotter
          */
         public void addPlotter(final Plotter plotter) {
@@ -493,7 +488,7 @@ class Metrics {
 
         /**
          * Remove a plotter from the graph
-         *
+         * 
          * @param plotter
          */
         public void removePlotter(final Plotter plotter) {
@@ -502,7 +497,7 @@ class Metrics {
 
         /**
          * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
-         *
+         * 
          * @return
          */
         public Set<Plotter> getPlotters() {
@@ -545,7 +540,7 @@ class Metrics {
 
         /**
          * Construct a plotter with a specific plot name
-         *
+         * 
          * @param name
          */
         public Plotter(final String name) {
@@ -554,14 +549,14 @@ class Metrics {
 
         /**
          * Get the current value for the plotted point
-         *
+         * 
          * @return
          */
         public abstract int getValue();
 
         /**
          * Get the column name for the plotted point
-         *
+         * 
          * @return the plotted point's column name
          */
         public String getColumnName() {
@@ -571,8 +566,7 @@ class Metrics {
         /**
          * Called after the website graphs have been updated
          */
-        public void reset() {
-        }
+        public void reset() {}
 
         @Override
         public int hashCode() {
