@@ -56,8 +56,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
 
     private File dataFolder = null;
 
-    private Metrics metrics;
-
     private ConsoleNameProperties properties = null;
 
     @Override
@@ -112,11 +110,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         getCommand(ConsoleNameCommandExecutor.COMMAND_SETPROPERTY).setExecutor(new ConsoleNameBCPropCommandExecutor(this));
 
         setFeatureActive(true);
-
-        if (startMetrics()) {
-            getLogger().info(getDescription().getName() + " v" + getDescription().getVersion()
-                    + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/53449/ for more information.");
-        }
     }
 
     @Override
@@ -141,14 +134,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
             msg = "Broadcast prefix of player " + targetPlayer + " removed.";
         }
         sender.sendMessage(msg);
-    }
-
-    private boolean startMetrics() {
-        try {
-            metrics = new Metrics(this);
-            return metrics.start();
-        } catch (IOException e) {}
-        return false;
     }
 
 }
