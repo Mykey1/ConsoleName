@@ -15,7 +15,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
         private static HashMap<String, PropertyAlias> aliasMap;
 
         static {
-            aliasMap = new HashMap<String, PropertyAlias>();
+            aliasMap = new HashMap<>();
             for (PropertyAlias a : values()) {
                 for (String s : a.aliases) {
                     aliasMap.put(s, a);
