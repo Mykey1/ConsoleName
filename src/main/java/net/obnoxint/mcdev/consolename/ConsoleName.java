@@ -1,6 +1,7 @@
 package net.obnoxint.mcdev.consolename;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.obnoxint.mcdev.feature.Feature;
 
@@ -111,18 +112,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         setFeatureActive(true);
     }
 
-    void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
-        String msg;
-        if (targetPlayer == null) {
-            getFeatureProperties().setPrefix(ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT);
-            msg = "Broadcast prefix reset to: " + ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT;
-        } else {
-            getFeatureProperties().setPrefix(targetPlayer, null);
-            msg = "Broadcast prefix of player " + targetPlayer + " removed.";
-        }
-        sender.sendMessage(msg);
-    }
-
     @Override
     public void setFeatureActive(boolean active) {
         if (this.active != active) {
@@ -133,6 +122,18 @@ public final class ConsoleName extends JavaPlugin implements Feature {
             }
             this.active = active;
         }
+    }
+
+    void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
+        String msg;
+        if (targetPlayer == null) {
+            getFeatureProperties().setPrefix(ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT);
+            msg = "Broadcast prefix reset to: " + ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT;
+        } else {
+            getFeatureProperties().setPrefix(targetPlayer, null);
+            msg = "Broadcast prefix of player " + targetPlayer + " removed.";
+        }
+        sender.sendMessage(msg);
     }
 
 }
