@@ -115,7 +115,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
 
         if (startMetrics()) {
             getLogger().info(getDescription().getName() + " v" + getDescription().getVersion()
-                    + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/53449/ for more information.");
+                    + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/77352/ for more information.");
         }
     }
 
