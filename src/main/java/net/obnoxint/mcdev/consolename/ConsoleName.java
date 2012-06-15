@@ -7,12 +7,23 @@ import net.obnoxint.mcdev.feature.Feature;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ConsoleName extends JavaPlugin implements Feature {
 
     private static ConsoleName instance = null;
+
+    static final String NO_PERMISSION_MSG = "You don't have the permission required in order to use this command: §o";
+
+    static final Permission PERMISSION_SENDBROADCAST = new Permission("consolename.sendbroadcast", PermissionDefault.OP);
+    static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);
+    static final Permission PERMISSION_SETPREFIX_GLOBAL = new Permission("consolename.setprefix.global", PermissionDefault.OP);
+    static final Permission PERMISSION_SETPREFIX_OTHER = new Permission("consolename.setprefix.other", PermissionDefault.OP);
+    static final Permission PERMISSION_SETPREFIX_OWN = new Permission("consolename.setprefix.own", PermissionDefault.OP);
+    static final Permission PERMISSION_SETPROPERTY = new Permission("consolename.setproperty", PermissionDefault.OP);
 
     public static ConsoleName getInstance() {
         return instance;
@@ -131,6 +142,14 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         }
     }
 
+    private boolean startMetrics() {
+        try {
+            metrics = new Metrics(this);
+            return metrics.start();
+        } catch (IOException e) {}
+        return false;
+    }
+
     void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
         String msg;
         if (targetPlayer == null) {
@@ -141,14 +160,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
             msg = "Broadcast prefix of player " + targetPlayer + " removed.";
         }
         sender.sendMessage(msg);
-    }
-
-    private boolean startMetrics() {
-        try {
-            metrics = new Metrics(this);
-            return metrics.start();
-        } catch (IOException e) {}
-        return false;
     }
 
 }

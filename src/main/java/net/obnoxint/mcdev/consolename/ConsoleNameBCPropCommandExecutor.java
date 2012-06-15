@@ -40,7 +40,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPROPERTY) : true)) {
+        if (args.length == 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPROPERTY) : true)) {
             PropertyAlias alias = PropertyAlias.getByAlias(args[0]);
             if (alias != null) {
                 ConsoleNameProperties prop = getPlugin().getFeatureProperties();
@@ -58,8 +58,8 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                 }
                 return true;
             }
-        } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SETPROPERTY)) {
-            sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPROPERTY.getName());
+        } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPROPERTY)) {
+            sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPROPERTY.getName());
             return true;
         }
         return false;

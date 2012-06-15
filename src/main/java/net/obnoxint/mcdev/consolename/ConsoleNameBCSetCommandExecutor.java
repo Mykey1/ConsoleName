@@ -15,15 +15,15 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
         String pre;
         ConsoleNameProperties prop = getPlugin().getFeatureProperties();
         if (args.length == 0) { // reset global prefix (no arguments)
-            if ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true) {
+            if ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_GLOBAL) : true) {
                 getPlugin().resetDefaultPrefix(sender, null);
             } else {
-                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL.getName());
+                sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_GLOBAL.getName());
             }
             return true;
         } else {
             if (args[0].equals("~") && sender instanceof Player) { // set or reset own per-player prefix (first argument is ~)
-                if (((Player) sender).hasPermission(PERMISSION_SETPREFIX_OWN)) {
+                if (((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_OWN)) {
                     Player player = (Player) sender;
                     if (args.length == 1) {
                         prop.setPrefix(player, null);
@@ -38,11 +38,11 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                         player.sendMessage("Your personal broadcast prefix has been set to: " + getPlugin().getFeatureProperties().getPrefix(player));
                     }
                 } else {
-                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OWN.getName());
+                    sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_OWN.getName());
                 }
                 return true;
             } else if (args[0].startsWith("@")) { // set or reset per-player prefix of another player (first argument starts with @)
-                if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_OTHER) : true)) {
+                if (((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_OTHER) : true)) {
                     String targetPlayer = args[0].substring(1).trim();
                     if (!targetPlayer.isEmpty()) {
                         if (args.length == 1) {
@@ -59,10 +59,10 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                         return true;
                     }
                 } else {
-                    sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_OTHER.getName());
+                    sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_OTHER.getName());
                     return true;
                 }
-            } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SETPREFIX_GLOBAL) : true)) { // set global prefix (other cases)
+            } else if (((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_GLOBAL) : true)) { // set global prefix (other cases)
                 pre = "";
                 for (int i = 0; i < args.length; i++) {
                     pre += args[i] + " ";
@@ -72,7 +72,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                 sender.sendMessage("Broadcast prefix set to: " + pre);
                 return true;
             } else {
-                sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SETPREFIX_GLOBAL.getName());
+                sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_GLOBAL.getName());
                 return true;
             }
         }

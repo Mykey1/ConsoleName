@@ -29,7 +29,7 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
+        if (args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
             String[] split = parseBCCCommandArgs(args);
             if (split != null) {
                 split[0] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[0]);
@@ -37,8 +37,8 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
                 ConsoleName.sendBroadcastMessage(split[0], split[1], sender);
                 return true;
             }
-        } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SENDBROADCAST_CUSTOM)) {
-            sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SENDBROADCAST_CUSTOM.getName());
+        } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM)) {
+            sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM.getName());
             return true;
         }
         return false;

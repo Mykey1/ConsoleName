@@ -12,7 +12,7 @@ final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(PERMISSION_SENDBROADCAST) : true)) {
+        if (args.length > 0 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST) : true)) {
             String pre = (sender instanceof Player) ? getPlugin().getFeatureProperties().getPrefix((Player) sender) : getPlugin().getFeatureProperties().getPrefix();
             String msg = "";
             for (int i = 0; i < args.length; i++) {
@@ -20,8 +20,8 @@ final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
             }
             ConsoleName.sendBroadcastMessage(pre, msg, sender);
             return true;
-        } else if (sender instanceof Player && !((Player) sender).hasPermission(PERMISSION_SENDBROADCAST)) {
-            sender.sendMessage(NO_PERMISSION_MSG + PERMISSION_SENDBROADCAST.getName());
+        } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST)) {
+            sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SENDBROADCAST.getName());
             return true;
         }
         return false;
