@@ -27,7 +27,7 @@ class ConsoleNameListener implements Listener {
                 && plugin.getFeatureProperties().isEnableSignBroadcast()
                 && p.getItemInHand().getType().equals(plugin.getFeatureProperties().getSignBroadcastTool())
                 && p.hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_SIGN)) {
-            Sign s = (Sign) b;
+            Sign s = (Sign) b.getState();
             String msg = "";
             for (int i = 0; i < s.getLines().length; i++) {
                 String l = s.getLine(i).trim();
