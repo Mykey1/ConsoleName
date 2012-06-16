@@ -81,7 +81,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                         }
                     }
                     prop.setSignBroadcastTool(m);
-                    sender.sendMessage("Sign broadcast tool set to $o" + m.name() + "§r.");
+                    sender.sendMessage("Sign broadcast tool set to §o" + m.name() + "§r.");
                 break;
                 }
                 return true;
