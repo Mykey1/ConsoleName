@@ -35,9 +35,8 @@ class ConsoleNameListener implements Listener {
                     msg += l + " ";
                 }
             }
-            msg = msg.trim();
             if (!msg.isEmpty()) {
-                ConsoleName.sendBroadcastMessage(plugin.getFeatureProperties().getPrefix(p), msg, p);
+                ConsoleName.sendBroadcastMessage(plugin.getFeatureProperties().getPrefix(p), plugin.getFeatureProperties().replaceChatFormatSymbol(msg), p);
                 event.setCancelled(true);
             }
         }
