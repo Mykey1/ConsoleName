@@ -55,8 +55,8 @@ class ConsoleNameListener implements Listener {
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage();
-        if (msg.startsWith("/say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
-            msg = "/" + ConsoleNameCommandExecutor.COMMAND_BROADCAST + " " + msg.substring(5);
+        if (msg.startsWith("/say ") && msg.length() > 5 && plugin.getFeatureProperties().isOverrideSayCommand()) {
+            msg = "/" + ConsoleNameCommandExecutor.COMMAND_BROADCAST + msg.substring(4);
             event.setMessage(msg);
         }
     }
@@ -64,8 +64,8 @@ class ConsoleNameListener implements Listener {
     @EventHandler
     public void onServerCommand(ServerCommandEvent event) {
         String cmd = event.getCommand();
-        if (cmd.startsWith("say") && plugin.getFeatureProperties().isOverrideSayCommand()) {
-            cmd = ConsoleNameCommandExecutor.COMMAND_BROADCAST + " " + cmd.substring(4);
+        if (cmd.startsWith("say ") && cmd.length() > 4 && plugin.getFeatureProperties().isOverrideSayCommand()) {
+            cmd = ConsoleNameCommandExecutor.COMMAND_BROADCAST + cmd.substring(3);
             event.setCommand(cmd);
         }
     }
