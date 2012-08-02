@@ -16,6 +16,11 @@
       <artifactId>craftbukkit</artifactId>
       <version>1.2.5-R5.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    	<groupId>net.obnoxint.mcdev</groupId>
+    	<artifactId>omc-lib</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

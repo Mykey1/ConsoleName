@@ -1,9 +1,13 @@
 package net.obnoxint.mcdev.consolename;
 
 import java.io.File;
-import java.io.IOException;
 
 import net.obnoxint.mcdev.feature.Feature;
+import net.obnoxint.mcdev.omclib.OmcLibPlugin;
+import net.obnoxint.mcdev.omclib.metrics.MetricsGraph;
+import net.obnoxint.mcdev.omclib.metrics.MetricsInstance;
+import net.obnoxint.mcdev.omclib.metrics.MetricsPlotter;
+import net.obnoxint.mcdev.omclib.metrics.OmcLibMetricsFeature;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -37,11 +41,11 @@ public final class ConsoleName extends JavaPlugin implements Feature {
      * @param message the message. Must not be null or empty.
      * @param sender the sender. If null is given no {@link BroadcastEvent} will be called.
      */
-    public static void sendBroadcastMessage(String prefix, String message, CommandSender sender) {
+    public static void sendBroadcastMessage(final String prefix, final String message, final CommandSender sender) {
         if (getInstance().isFeatureActive()) {
             if (message != null && !message.trim().isEmpty()) {
-                String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
-                String m = message.trim();
+                final String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
+                final String m = message.trim();
                 Bukkit.getServer().broadcastMessage(p + " " + m);
                 if (sender != null) {
                     Bukkit.getPluginManager().callEvent(new BroadcastEvent(prefix, message, sender));
@@ -52,7 +56,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         }
     }
 
-    private static void setInstance(ConsoleName instance) {
+    private static void setInstance(final ConsoleName instance) {
         if (ConsoleName.instance == null && instance != null) {
             ConsoleName.instance = instance;
         }
@@ -65,13 +69,9 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     }
 
     private boolean active = false;
-
     private File dataFolder = null;
-
-    private Metrics metrics;
-
     private ConsoleNameProperties properties = null;
-
+    private OmcLibPlugin omcLib;
     @Override
     public File getDataFolder() {
         if (dataFolder == null) {
@@ -115,6 +115,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     @Override
     public void onEnable() {
         setInstance(this);
+        omcLib = (OmcLibPlugin) getServer().getPluginManager().getPlugin("omc-lib");
 
         getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
 
@@ -123,16 +124,19 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         getCommand(ConsoleNameCommandExecutor.COMMAND_BROADCAST_SETPREFIX).setExecutor(new ConsoleNameBCSetCommandExecutor(this));
         getCommand(ConsoleNameCommandExecutor.COMMAND_SETPROPERTY).setExecutor(new ConsoleNameBCPropCommandExecutor(this));
 
-        setFeatureActive(true);
-
-        if (startMetrics()) {
-            getLogger().info(getDescription().getName() + " v" + getDescription().getVersion()
-                    + " is now using Hidendras Metrics. See http://forums.bukkit.org/threads/77352/ for more information.");
+        try {
+            omcLib.getFeatureManager().addFeature(this);
+            if (!isFeatureActive()) {
+                setFeatureActive(true);
+            }
+        } catch (final UnsupportedOperationException e) {
+            getLogger().info("Can not add feature.");
+            getServer().getPluginManager().disablePlugin(this);
         }
     }
 
     @Override
-    public void setFeatureActive(boolean active) {
+    public void setFeatureActive(final boolean active) {
         if (this.active != active) {
             if (active) {
                 getFeatureProperties().loadProperties();
@@ -143,15 +147,19 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         }
     }
 
-    private boolean startMetrics() {
-        try {
-            metrics = new Metrics(this);
-            return metrics.start();
-        } catch (IOException e) {}
-        return false;
+    void updateMetrics(final BroadcastType type){
+        final OmcLibMetricsFeature f = omcLib.getMetricsFeature();
+        if (f != null){
+            final MetricsInstance i = f.getMetricsInstance(this); 
+            final MetricsGraph g = i.getGraph("Broadcasts");
+            final MetricsPlotter p = g.getPlotter(type.getId());
+            p.modifyBalance(1);
+            g.updatePlotter(p);
+            i.updateGraph(g);            
+        }
     }
 
-    void resetDefaultPrefix(CommandSender sender, String targetPlayer) {
+    void resetDefaultPrefix(final CommandSender sender, final String targetPlayer) {
         String msg;
         if (targetPlayer == null) {
             getFeatureProperties().setPrefix(ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT);

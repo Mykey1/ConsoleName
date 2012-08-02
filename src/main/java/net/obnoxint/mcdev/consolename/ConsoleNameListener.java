@@ -47,6 +47,7 @@ class ConsoleNameListener implements Listener {
                         ((CraftPlayer)p).getHandle().netServerHandler.sendPacket(new Packet130UpdateSign(b.getX(), b.getY(), b.getZ(), s.getLines()));
                     }
                 }, 50);
+                plugin.updateMetrics(BroadcastType.SIGN);
                 event.setCancelled(true);
             }
         }

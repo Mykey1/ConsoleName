@@ -1,7 +1,8 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 1.6
+version: 1.7
 author: obnoxint
+depend: [omc-lib]
 commands:
     bc:
         description: send a broadcast message
