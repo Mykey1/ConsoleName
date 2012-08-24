@@ -4,6 +4,8 @@ public enum BroadcastType {
 
     SIGN("Sign"),
     SIMPLE("Simple"),
+    SAY_PLAYER("Say (Player)"),
+    SAY_SERVER("Say (Server)"),
     CUSTOM("Custom");
 
     private final String id;

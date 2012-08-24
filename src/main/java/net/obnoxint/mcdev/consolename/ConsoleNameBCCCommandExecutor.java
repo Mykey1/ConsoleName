@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 
 final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
 
-    private static String[] parseBCCCommandArgs(String[] args) {
+    private static String[] parseBCCCommandArgs(final String[] args) {
         String line = "";
         String[] r;
-        for (String s : args) {
+        for (final String s : args) {
             line += " " + s;
         }
         line = line.trim();
@@ -23,19 +23,16 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
         return null;
     }
 
-    ConsoleNameBCCCommandExecutor(ConsoleName plugin) {
+    ConsoleNameBCCCommandExecutor(final ConsoleName plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
-            String[] split = parseBCCCommandArgs(args);
+            final String[] split = parseBCCCommandArgs(args);
             if (split != null) {
-                split[0] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[0]);
-                split[1] = getPlugin().getFeatureProperties().replaceChatFormatSymbol(split[1]);
-                ConsoleName.sendBroadcastMessage(split[0], split[1], sender);
-                getPlugin().updateMetrics(BroadcastType.CUSTOM);
+                ConsoleName.sendBroadcastMessage(split[0], split[1], true);
                 return true;
             }
         } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM)) {

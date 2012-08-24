@@ -11,6 +11,7 @@ import net.obnoxint.mcdev.omclib.metrics.OmcLibMetricsFeature;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -34,23 +35,29 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         return instance;
     }
 
-    /**
-     * Sends a broadcast message.
-     * 
-     * @param prefix the prefix. If null or an empty String is given the default prefix (see: CONFIG_PREFIX_DEFAULT) will be used.
-     * @param message the message. Must not be null or empty.
-     * @param sender the sender. If null is given no {@link BroadcastEvent} will be called.
-     */
-    public static void sendBroadcastMessage(final String prefix, final String message, final CommandSender sender) {
-        if (getInstance().isFeatureActive()) {
-            if (message != null && !message.trim().isEmpty()) {
-                final String p = (prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim();
-                final String m = message.trim();
-                Bukkit.getServer().broadcastMessage(p + " " + m);
-                if (sender != null) {
-                    Bukkit.getPluginManager().callEvent(new BroadcastEvent(prefix, message, sender));
-                }
-            }
+    public static void sendBroadcastMessage(final CommandSender sender, final String message) {
+        final String prefix = (sender instanceof Player) ? getInstance().getFeatureProperties().getPrefix((Player) sender) : getInstance().getFeatureProperties().getPrefix();
+        sendBroadcastMessage(BroadcastType.SIMPLE, prefix, message);
+    }
+
+    public static void sendBroadcastMessage(final String message) {
+        sendBroadcastMessage(Bukkit.getConsoleSender(), message);
+    }
+
+    public static void sendBroadcastMessage(final String prefix, final String message) {
+        sendBroadcastMessage(prefix, message, false);
+    }
+
+    public static void sendBroadcastMessage(final String prefix, final String message, final boolean replaceChatFormatSymbol) {
+        sendBroadcastMessage(BroadcastType.CUSTOM,
+                (replaceChatFormatSymbol) ? getInstance().getFeatureProperties().replaceChatFormatSymbol(prefix) : prefix,
+                (replaceChatFormatSymbol) ? getInstance().getFeatureProperties().replaceChatFormatSymbol(message) : message);
+    }
+
+    static void sendBroadcastMessage(final BroadcastType type, final String prefix, final String message) {
+        if (getInstance().isFeatureActive() && message != null && !message.trim().isEmpty()) {
+            Bukkit.getServer().broadcastMessage((prefix == null || prefix.trim().isEmpty()) ? ConsoleNameProperties.PROPERTY_PREFIX_DEFAULT : prefix.trim() + " " + message.trim());
+            getInstance().updateMetrics(type);
         } else {
             getInstance().getLogger().info("Tried sending broadcast but feature is inactiv.");
         }
@@ -72,6 +79,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     private File dataFolder = null;
     private ConsoleNameProperties properties = null;
     private OmcLibPlugin omcLib;
+
     @Override
     public File getDataFolder() {
         if (dataFolder == null) {
@@ -147,18 +155,6 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         }
     }
 
-    void updateMetrics(final BroadcastType type){
-        final OmcLibMetricsFeature f = omcLib.getMetricsFeature();
-        if (f != null){
-            final MetricsInstance i = f.getMetricsInstance(this); 
-            final MetricsGraph g = i.getGraph("Broadcasts");
-            final MetricsPlotter p = g.getPlotter(type.getId());
-            p.modifyBalance(1);
-            g.updatePlotter(p);
-            i.updateGraph(g);            
-        }
-    }
-
     void resetDefaultPrefix(final CommandSender sender, final String targetPlayer) {
         String msg;
         if (targetPlayer == null) {
@@ -169,6 +165,18 @@ public final class ConsoleName extends JavaPlugin implements Feature {
             msg = "Broadcast prefix of player " + targetPlayer + " removed.";
         }
         sender.sendMessage(msg);
+    }
+
+    private void updateMetrics(final BroadcastType type) {
+        final OmcLibMetricsFeature f = omcLib.getMetricsFeature();
+        if (f != null) {
+            final MetricsInstance i = f.getMetricsInstance(this);
+            final MetricsGraph g = i.getGraph("Broadcasts");
+            final MetricsPlotter p = g.getPlotter(type.getId());
+            p.modifyBalance(1);
+            g.updatePlotter(p);
+            i.updateGraph(g);
+        }
     }
 
 }
