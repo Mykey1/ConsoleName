@@ -68,7 +68,7 @@ class ConsoleNameListener implements Listener {
         final String cmd = event.getCommand();
         if (cmd.startsWith("say ") && cmd.length() > 4 && plugin.getFeatureProperties().isOverrideSayCommand()) {
             ConsoleName.sendBroadcastMessage(BroadcastType.SAY_SERVER, plugin.getFeatureProperties().getPrefix(), cmd.substring(3));
-            event.setCommand(null); // prevent the server from executing the command.
+            event.setCommand(""); // prevent the server from executing the command.
         }
     }
 
