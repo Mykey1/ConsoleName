@@ -77,7 +77,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
             setDirty();
         } else {
             chatFormatSymbol = chatFormatSymbol.trim();
-            if (this.chatFormatSymbol != chatFormatSymbol) {
+            if (!this.chatFormatSymbol.equals(chatFormatSymbol)) {
                 this.chatFormatSymbol = chatFormatSymbol;
                 setDirty();
             }
