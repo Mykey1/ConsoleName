@@ -147,9 +147,9 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     public void setFeatureActive(final boolean active) {
         if (this.active != active) {
             if (active) {
-                getFeatureProperties().loadProperties();
+                getFeatureProperties().load();
             } else {
-                getFeatureProperties().storeProperties();
+                getFeatureProperties().store();
             }
             this.active = active;
         }
