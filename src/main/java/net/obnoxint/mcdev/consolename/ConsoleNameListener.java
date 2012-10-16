@@ -57,8 +57,13 @@ class ConsoleNameListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String msg = event.getMessage();
+        final Player p = event.getPlayer();
         if (msg.startsWith("/say ") && msg.length() > 5 && plugin.getFeatureProperties().isOverrideSayCommand()) {
-            ConsoleName.sendBroadcastMessage(BroadcastType.SAY_PLAYER, plugin.getFeatureProperties().getPrefix(event.getPlayer()), msg.substring(4));
+            if (p.hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_SAY)) {
+                ConsoleName.sendBroadcastMessage(BroadcastType.SAY_PLAYER, plugin.getFeatureProperties().getPrefix(event.getPlayer()), msg.substring(4));
+            } else {
+                p.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SENDBROADCAST_SAY);
+            }
             event.setCancelled(true);
         }
     }

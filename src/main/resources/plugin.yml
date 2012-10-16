@@ -1,6 +1,6 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 1.11
+version: 1.12
 author: obnoxint
 depend: [omc-lib]
 commands:
