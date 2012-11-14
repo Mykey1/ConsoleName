@@ -2,12 +2,12 @@ package net.obnoxint.mcdev.consolename;
 
 import java.io.File;
 
-import net.obnoxint.mcdev.feature.Feature;
-import net.obnoxint.mcdev.omclib.OmcLibPlugin;
-import net.obnoxint.mcdev.omclib.metrics.MetricsGraph;
-import net.obnoxint.mcdev.omclib.metrics.MetricsInstance;
-import net.obnoxint.mcdev.omclib.metrics.MetricsPlotter;
-import net.obnoxint.mcdev.omclib.metrics.OmcLibMetricsFeature;
+import net.obnoxint.mcdev.mosaic.MosaicPlugin;
+import net.obnoxint.mcdev.mosaic.feature.Feature;
+import net.obnoxint.mcdev.mosaic.metrics.MetricsGraph;
+import net.obnoxint.mcdev.mosaic.metrics.MetricsInstance;
+import net.obnoxint.mcdev.mosaic.metrics.MetricsPlotter;
+import net.obnoxint.mcdev.mosaic.metrics.MosaicMetricsFeature;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -79,7 +79,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     private boolean active = false;
     private File dataFolder = null;
     private ConsoleNameProperties properties = null;
-    private OmcLibPlugin omcLib;
+    private MosaicPlugin mosaic;
 
     @Override
     public File getDataFolder() {
@@ -124,7 +124,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     @Override
     public void onEnable() {
         setInstance(this);
-        omcLib = (OmcLibPlugin) getServer().getPluginManager().getPlugin("omc-lib");
+        mosaic = (MosaicPlugin) getServer().getPluginManager().getPlugin(MosaicPlugin.PLUGIN_NAME);
 
         getServer().getPluginManager().registerEvents(new ConsoleNameListener(this), this);
 
@@ -134,7 +134,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
         getCommand(ConsoleNameCommandExecutor.COMMAND_SETPROPERTY).setExecutor(new ConsoleNameBCPropCommandExecutor(this));
 
         try {
-            omcLib.getFeatureManager().addFeature(this);
+            mosaic.getFeatureManager().addFeature(this);
             if (!isFeatureActive()) {
                 setFeatureActive(true);
             }
@@ -169,7 +169,7 @@ public final class ConsoleName extends JavaPlugin implements Feature {
     }
 
     private void updateMetrics(final BroadcastType type) {
-        final OmcLibMetricsFeature f = omcLib.getMetricsFeature();
+        final MosaicMetricsFeature f = mosaic.getMetricsFeature();
         if (f != null) {
             final MetricsInstance i = f.getMetricsInstance(this);
             final MetricsGraph g = i.getGraph("Broadcasts");

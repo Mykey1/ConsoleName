@@ -2,7 +2,7 @@ package net.obnoxint.mcdev.consolename;
 
 import java.util.HashMap;
 
-import net.obnoxint.mcdev.feature.FeatureProperties;
+import net.obnoxint.mcdev.mosaic.feature.FeatureProperties;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
