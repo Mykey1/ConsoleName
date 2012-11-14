@@ -25,11 +25,11 @@ public final class ConsoleNameProperties extends FeatureProperties {
     private String chatFormatSymbol = PROPERTY_CHATFORMATSYMBOL_DEFAULT;
     private boolean overrideSayCommand = false;
     private String prefix = PROPERTY_PREFIX_DEFAULT;
-    private HashMap<String, String> prefixes = new HashMap<>();
+    private final HashMap<String, String> prefixes = new HashMap<>();
     private boolean enableSignBroadcast = false;
     private int signBroadcastToolId = PROPERTY_SIGNBROADCASTTOOLID_DEFAULT;
 
-    ConsoleNameProperties(ConsoleName feature) {
+    ConsoleNameProperties(final ConsoleName feature) {
         super(feature);
     }
 
@@ -48,7 +48,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
      * @param player The player.
      * @return The broadcast prefix of the given player.
      */
-    public String getPrefix(Player player) {
+    public String getPrefix(final Player player) {
         String r = null;
         if (player != null) {
             r = getPrefix(player.getName());
@@ -84,7 +84,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
         }
     }
 
-    public void setEnableSignBroadcast(boolean enableSignBroadcast) {
+    public void setEnableSignBroadcast(final boolean enableSignBroadcast) {
         if (this.enableSignBroadcast != enableSignBroadcast) {
             this.enableSignBroadcast = enableSignBroadcast;
             setDirty();
@@ -96,7 +96,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
      * 
      * @param overrideSayCommand true if the 'say' command should be overridden.
      */
-    public void setOverrideSayCommand(boolean overrideSayCommand) {
+    public void setOverrideSayCommand(final boolean overrideSayCommand) {
         if (this.overrideSayCommand != overrideSayCommand) {
             this.overrideSayCommand = overrideSayCommand;
             setDirty();
@@ -109,7 +109,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
      * @param player the player.
      * @param prefix the broadcast prefix. If null or an empty String is given, the personalized prefix will be removed.
      */
-    public void setPrefix(Player player, String prefix) {
+    public void setPrefix(final Player player, final String prefix) {
         if (player != null) {
             setPrefix(player.getName(), prefix);
         }
@@ -120,15 +120,15 @@ public final class ConsoleNameProperties extends FeatureProperties {
      * 
      * @param prefix The broadcast prefix. May contain chat format codes.
      */
-    public void setPrefix(String prefix) {
+    public void setPrefix(final String prefix) {
         if (prefix != null && !prefix.isEmpty()) {
             this.prefix = replaceChatFormatSymbol(prefix);
             setDirty();
         }
     }
 
-    public void setSignBroadcastTool(Material signBroadcastTool) {
-        int id = signBroadcastTool.getId();
+    public void setSignBroadcastTool(final Material signBroadcastTool) {
+        final int id = signBroadcastTool.getId();
         if (this.signBroadcastToolId != id) {
             this.signBroadcastToolId = id;
             setDirty();
@@ -151,11 +151,11 @@ public final class ConsoleNameProperties extends FeatureProperties {
 
         // load signBroadcastId
         try {
-            int id = Integer.valueOf(getProperties().getProperty(PROPERTY_SIGNBROADCASTTOOLID_NAME));
+            final int id = Integer.valueOf(getProperties().getProperty(PROPERTY_SIGNBROADCASTTOOLID_NAME));
             if (Material.getMaterial(id) != null) {
                 signBroadcastToolId = id;
             }
-        } catch (NumberFormatException e) {}
+        } catch (final NumberFormatException e) {}
 
         // load per-player prefixes
         for (String prop : getProperties().stringPropertyNames()) {
@@ -177,20 +177,20 @@ public final class ConsoleNameProperties extends FeatureProperties {
         getProperties().setProperty(PROPERTY_SIGNBROADCASTTOOLID_NAME, String.valueOf(signBroadcastToolId));
 
         // store per-player prefixes
-        for (String prop : prefixes.keySet()) {
+        for (final String prop : prefixes.keySet()) {
             getProperties().setProperty(PROPERTY_PERPLAYER_NAME_PREFIX + prop, prefixes.get(prop));
         }
     }
 
-    String getPrefix(String playerName) {
+    String getPrefix(final String playerName) {
         return prefixes.get(playerName);
     }
 
-    String replaceChatFormatSymbol(String string) {
+    String replaceChatFormatSymbol(final String string) {
         return string.replaceAll(getChatFormatSymbol(), CHAT_FORMAT_SYMBOL);
     }
 
-    void setPrefix(String playerName, String prefix) {
+    void setPrefix(final String playerName, final String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             prefixes.remove(playerName);
         } else {

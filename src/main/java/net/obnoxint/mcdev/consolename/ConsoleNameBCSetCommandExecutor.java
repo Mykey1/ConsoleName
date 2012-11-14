@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 
 final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
 
-    ConsoleNameBCSetCommandExecutor(ConsoleName plugin) {
+    ConsoleNameBCSetCommandExecutor(final ConsoleName plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         String pre;
-        ConsoleNameProperties prop = getPlugin().getFeatureProperties();
+        final ConsoleNameProperties prop = getPlugin().getFeatureProperties();
         if (args.length == 0) { // reset global prefix (no arguments)
             if ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_GLOBAL) : true) {
                 getPlugin().resetDefaultPrefix(sender, null);
@@ -24,7 +24,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
         } else {
             if (args[0].equals("~") && sender instanceof Player) { // set or reset own per-player prefix (first argument is ~)
                 if (((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_OWN)) {
-                    Player player = (Player) sender;
+                    final Player player = (Player) sender;
                     if (args.length == 1) {
                         prop.setPrefix(player, null);
                         player.sendMessage("Your personal broadcast prefix has been removed.");
@@ -43,7 +43,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                 return true;
             } else if (args[0].startsWith("@")) { // set or reset per-player prefix of another player (first argument starts with @)
                 if (((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_OTHER) : true)) {
-                    String targetPlayer = args[0].substring(1).trim();
+                    final String targetPlayer = args[0].substring(1).trim();
                     if (!targetPlayer.isEmpty()) {
                         if (args.length == 1) {
                             getPlugin().resetDefaultPrefix(sender, targetPlayer);

@@ -19,38 +19,38 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
 
         static {
             aliasMap = new HashMap<>();
-            for (PropertyAlias a : values()) {
-                for (String s : a.aliases) {
+            for (final PropertyAlias a : values()) {
+                for (final String s : a.aliases) {
                     aliasMap.put(s, a);
                 }
             }
         }
 
-        static PropertyAlias getByAlias(String alias) {
+        static PropertyAlias getByAlias(final String alias) {
             return aliasMap.get(alias.toLowerCase());
         }
 
         private final String[] aliases;
 
-        private PropertyAlias(String... aliases) {
+        private PropertyAlias(final String... aliases) {
             this.aliases = aliases;
         }
     }
 
-    ConsoleNameBCPropCommandExecutor(ConsoleName plugin) {
+    ConsoleNameBCPropCommandExecutor(final ConsoleName plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (args.length == 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPROPERTY) : true)) {
-            PropertyAlias alias = PropertyAlias.getByAlias(args[0]);
+            final PropertyAlias alias = PropertyAlias.getByAlias(args[0]);
             if (alias != null) {
-                ConsoleNameProperties prop = getPlugin().getFeatureProperties();
+                final ConsoleNameProperties prop = getPlugin().getFeatureProperties();
                 boolean b;
                 switch (alias) {
                 case CHAT_FORMAT_SYMBOL:
-                    String s = args[1];
+                    final String s = args[1];
                     prop.setChatFormatSymbol(s);
                     sender.sendMessage("The new chat format symbol is \"" + s + "\".");
                 break;
@@ -75,7 +75,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                                 sender.sendMessage("Material §o" + args[1] + "§r does not exist.");
                                 return true;
                             }
-                        } catch (NumberFormatException e) {
+                        } catch (final NumberFormatException e) {
                             sender.sendMessage("§o" + args[1] + "§r is not a valid material id.");
                             return true;
                         }

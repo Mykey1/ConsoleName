@@ -13,7 +13,7 @@ abstract class ConsoleNameCommandExecutor implements CommandExecutor {
 
     private final ConsoleName plugin;
 
-    protected ConsoleNameCommandExecutor(ConsoleName plugin) {
+    protected ConsoleNameCommandExecutor(final ConsoleName plugin) {
         this.plugin = plugin;
     }
 
