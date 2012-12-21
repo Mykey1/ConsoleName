@@ -7,20 +7,20 @@
 	<name>ConsoleName-CraftBukkit-Plugin</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.4.4-R0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>net.obnoxint.mcdev</groupId>
 			<artifactId>mosaic</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.4.5-R1.0</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/repositories/snapshots</url>
+			<id>craftbukkit-repo</id>
+			<url>http://repo.bukkit.org/content/repositories/releases</url>
 		</repository>
 	</repositories>
 	<build>

@@ -6,8 +6,8 @@ import org.bukkit.entity.Player;
 
 final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
 
-    ConsoleNameBCCommandExecutor(final ConsoleName plugin) {
-        super(plugin);
+    ConsoleNameBCCommandExecutor() {
+        super();
     }
 
     @Override
@@ -17,7 +17,7 @@ final class ConsoleNameBCCommandExecutor extends ConsoleNameCommandExecutor {
             for (int i = 0; i < args.length; i++) {
                 msg = msg + " " + args[i];
             }
-            ConsoleName.sendBroadcastMessage(sender, msg);
+            getFeature().sendBroadcastMessage(sender, msg);
             return true;
         } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST)) {
             sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SENDBROADCAST.getName());

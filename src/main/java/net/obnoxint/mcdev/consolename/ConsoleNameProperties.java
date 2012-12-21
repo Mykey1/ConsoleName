@@ -1,14 +1,13 @@
 package net.obnoxint.mcdev.consolename;
 
-import java.util.HashMap;
-
-import net.obnoxint.mcdev.mosaic.feature.FeatureProperties;
+import net.obnoxint.mcdev.mosaic.MosaicBase;
+import net.obnoxint.mcdev.mosaic.MosaicFeatureProperties;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public final class ConsoleNameProperties extends FeatureProperties {
+public final class ConsoleNameProperties extends MosaicFeatureProperties {
 
     public static final String PROPERTY_CHATFORMATSYMBOL_DEFAULT = "&";
     public static final String PROPERTY_PREFIX_DEFAULT = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[Console]" + ChatColor.RESET.toString() + ":";
@@ -17,19 +16,19 @@ public final class ConsoleNameProperties extends FeatureProperties {
     private static final String CHAT_FORMAT_SYMBOL = "§";
     private static final String PROPERTY_CHATFORMATSYMBOL_NAME = "chatFormatSymbol";
     private static final String PROPERTY_OVERRIDESAYCOMMAND_NAME = "overrideSayCommand";
-    private static final String PROPERTY_PERPLAYER_NAME_PREFIX = "player_";
     private static final String PROPERTY_PREFIX_NAME = "prefix";
     private static final String PROPERTY_ENABLESIGNBROADCAST_NAME = "enableSignBroadcast";
     private static final String PROPERTY_SIGNBROADCASTTOOLID_NAME = "signBroadcastToolId";
 
+    private static final String PROPERTY_MANAGER_PERPLAYER_PREFIX = "playerBroadcastPrefix";
+
     private String chatFormatSymbol = PROPERTY_CHATFORMATSYMBOL_DEFAULT;
     private boolean overrideSayCommand = false;
     private String prefix = PROPERTY_PREFIX_DEFAULT;
-    private final HashMap<String, String> prefixes = new HashMap<>();
     private boolean enableSignBroadcast = false;
     private int signBroadcastToolId = PROPERTY_SIGNBROADCASTTOOLID_DEFAULT;
 
-    ConsoleNameProperties(final ConsoleName feature) {
+    ConsoleNameProperties(final ConsoleNameFeature feature) {
         super(feature);
     }
 
@@ -51,7 +50,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
     public String getPrefix(final Player player) {
         String r = null;
         if (player != null) {
-            r = getPrefix(player.getName());
+            r = MosaicBase.getPropertyManager().getPropertyContainer(player).getProperty(getFeature(), PROPERTY_MANAGER_PERPLAYER_PREFIX);
         }
         return (r == null) ? prefix : r;
     }
@@ -111,7 +110,11 @@ public final class ConsoleNameProperties extends FeatureProperties {
      */
     public void setPrefix(final Player player, final String prefix) {
         if (player != null) {
-            setPrefix(player.getName(), prefix);
+            if (prefix == null || prefix.isEmpty()) {
+                MosaicBase.getPropertyManager().getPropertyContainer(player).removeProperty(getFeature(), PROPERTY_MANAGER_PERPLAYER_PREFIX);
+            } else {
+                MosaicBase.getPropertyManager().getPropertyContainer(player).setProperty(getFeature(), PROPERTY_MANAGER_PERPLAYER_PREFIX, prefix);
+            }
         }
     }
 
@@ -140,6 +143,7 @@ public final class ConsoleNameProperties extends FeatureProperties {
         getProperties().setProperty(PROPERTY_OVERRIDESAYCOMMAND_NAME, String.valueOf(overrideSayCommand));
         getProperties().setProperty(PROPERTY_CHATFORMATSYMBOL_NAME, chatFormatSymbol);
         getProperties().setProperty(PROPERTY_PREFIX_NAME, prefix);
+        store();
     }
 
     @Override
@@ -156,16 +160,6 @@ public final class ConsoleNameProperties extends FeatureProperties {
                 signBroadcastToolId = id;
             }
         } catch (final NumberFormatException e) {}
-
-        // load per-player prefixes
-        for (String prop : getProperties().stringPropertyNames()) {
-            if (prop.startsWith(PROPERTY_PERPLAYER_NAME_PREFIX)) {
-                prop = prop.substring(PROPERTY_PERPLAYER_NAME_PREFIX.length());
-                if (!prop.isEmpty()) {
-                    prefixes.put(prop, getProperties().getProperty(PROPERTY_PERPLAYER_NAME_PREFIX + prop));
-                }
-            }
-        }
     }
 
     @Override
@@ -175,28 +169,10 @@ public final class ConsoleNameProperties extends FeatureProperties {
         getProperties().setProperty(PROPERTY_PREFIX_NAME, prefix);
         getProperties().setProperty(PROPERTY_ENABLESIGNBROADCAST_NAME, String.valueOf(enableSignBroadcast));
         getProperties().setProperty(PROPERTY_SIGNBROADCASTTOOLID_NAME, String.valueOf(signBroadcastToolId));
-
-        // store per-player prefixes
-        for (final String prop : prefixes.keySet()) {
-            getProperties().setProperty(PROPERTY_PERPLAYER_NAME_PREFIX + prop, prefixes.get(prop));
-        }
-    }
-
-    String getPrefix(final String playerName) {
-        return prefixes.get(playerName);
     }
 
     String replaceChatFormatSymbol(final String string) {
         return string.replaceAll(getChatFormatSymbol(), CHAT_FORMAT_SYMBOL);
-    }
-
-    void setPrefix(final String playerName, final String prefix) {
-        if (prefix == null || prefix.isEmpty()) {
-            prefixes.remove(playerName);
-        } else {
-            prefixes.put(playerName, replaceChatFormatSymbol(prefix));
-        }
-        setDirty();
     }
 
 }

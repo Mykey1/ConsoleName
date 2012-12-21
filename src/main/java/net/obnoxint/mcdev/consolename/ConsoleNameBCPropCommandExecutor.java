@@ -37,8 +37,8 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
         }
     }
 
-    ConsoleNameBCPropCommandExecutor(final ConsoleName plugin) {
-        super(plugin);
+    ConsoleNameBCPropCommandExecutor() {
+        super();
     }
 
     @Override
@@ -46,23 +46,23 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
         if (args.length == 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPROPERTY) : true)) {
             final PropertyAlias alias = PropertyAlias.getByAlias(args[0]);
             if (alias != null) {
-                final ConsoleNameProperties prop = getPlugin().getFeatureProperties();
                 boolean b;
                 switch (alias) {
                 case CHAT_FORMAT_SYMBOL:
                     final String s = args[1];
-                    prop.setChatFormatSymbol(s);
+                    getFeature().getMosaicFeatureProperties().setChatFormatSymbol(s);
                     sender.sendMessage("The new chat format symbol is \"" + s + "\".");
                 break;
                 case OVERRIDE_SAY_COMMAND:
                     b = Boolean.valueOf(args[1]);
-                    prop.setOverrideSayCommand(b);
+                    getFeature().getMosaicFeatureProperties().setOverrideSayCommand(b);
                     sender.sendMessage("The 'say' command will" + ((!b) ? " not" : "") + " be overridden by the '" + COMMAND_BROADCAST + "' command.");
                 break;
                 case ENABLE_SIGN_BROADCAST:
                     b = Boolean.valueOf(args[1]);
-                    prop.setEnableSignBroadcast(b);
-                    sender.sendMessage("Sending broadcasts by left-clicking signs with §o" + prop.getSignBroadcastTool().name() + "§r is " + ((!b) ? "disabled." : "enabled. "));
+                    getFeature().getMosaicFeatureProperties().setEnableSignBroadcast(b);
+                    sender.sendMessage("Sending broadcasts by left-clicking signs with §o" + getFeature().getMosaicFeatureProperties().getSignBroadcastTool().name() + "§r is "
+                            + ((!b) ? "disabled." : "enabled. "));
                 break;
                 case SIGN_BROADCAST_TOOL:
                     Material m;
@@ -80,7 +80,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                             return true;
                         }
                     }
-                    prop.setSignBroadcastTool(m);
+                    getFeature().getMosaicFeatureProperties().setSignBroadcastTool(m);
                     sender.sendMessage("Sign broadcast tool set to §o" + m.name() + "§r.");
                 break;
                 }

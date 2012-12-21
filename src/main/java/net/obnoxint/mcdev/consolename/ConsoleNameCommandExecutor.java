@@ -11,14 +11,10 @@ abstract class ConsoleNameCommandExecutor implements CommandExecutor {
     protected static final String COMMAND_BROADCAST_SETPREFIX = "bcset";
     protected static final String COMMAND_SETPROPERTY = "bcprop";
 
-    private final ConsoleName plugin;
+    protected ConsoleNameCommandExecutor() {}
 
-    protected ConsoleNameCommandExecutor(final ConsoleName plugin) {
-        this.plugin = plugin;
-    }
-
-    protected final ConsoleName getPlugin() {
-        return plugin;
+    protected final ConsoleNameFeature getFeature() {
+        return ConsoleName.getConsoleNameFeature();
     }
 
 }
