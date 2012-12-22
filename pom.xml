@@ -5,6 +5,9 @@
 	<artifactId>ConsoleName</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ConsoleName-CraftBukkit-Plugin</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>net.obnoxint.mcdev</groupId>
