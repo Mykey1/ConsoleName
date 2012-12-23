@@ -10,7 +10,7 @@ public final class ConsoleName extends MosaicBase {
 
     private static ConsoleName instance = null;
 
-    static final String NO_PERMISSION_MSG = "You don't have the permission required in order to use this command: §o";
+    static final String NO_PERMISSION_MSG = "You don't have the permission required in order to use this command: Â§o";
 
     static final Permission PERMISSION_SENDBROADCAST = new Permission("consolename.sendbroadcast", PermissionDefault.OP);
     static final Permission PERMISSION_SENDBROADCAST_CUSTOM = new Permission("consolename.sendbroadcast.custom", PermissionDefault.OP);

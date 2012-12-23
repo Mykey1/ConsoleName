@@ -13,7 +13,7 @@ public final class ConsoleNameProperties extends MosaicFeatureProperties {
     public static final String PROPERTY_PREFIX_DEFAULT = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[Console]" + ChatColor.RESET.toString() + ":";
     public static final int PROPERTY_SIGNBROADCASTTOOLID_DEFAULT = Material.BOOK.getId(); // 340
 
-    private static final String CHAT_FORMAT_SYMBOL = "ง";
+    private static final String CHAT_FORMAT_SYMBOL = "ยง";
     private static final String PROPERTY_CHATFORMATSYMBOL_NAME = "chatFormatSymbol";
     private static final String PROPERTY_OVERRIDESAYCOMMAND_NAME = "overrideSayCommand";
     private static final String PROPERTY_PREFIX_NAME = "prefix";

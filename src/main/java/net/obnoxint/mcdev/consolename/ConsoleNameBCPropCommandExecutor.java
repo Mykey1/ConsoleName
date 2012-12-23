@@ -61,7 +61,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                 case ENABLE_SIGN_BROADCAST:
                     b = Boolean.valueOf(args[1]);
                     getFeature().getMosaicFeatureProperties().setEnableSignBroadcast(b);
-                    sender.sendMessage("Sending broadcasts by left-clicking signs with §o" + getFeature().getMosaicFeatureProperties().getSignBroadcastTool().name() + "§r is "
+                    sender.sendMessage("Sending broadcasts by left-clicking signs with Â§o" + getFeature().getMosaicFeatureProperties().getSignBroadcastTool().name() + "Â§r is "
                             + ((!b) ? "disabled." : "enabled. "));
                 break;
                 case SIGN_BROADCAST_TOOL:
@@ -72,16 +72,16 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                         try {
                             m = Material.getMaterial(Integer.parseInt(args[1]));
                             if (m == null) {
-                                sender.sendMessage("Material §o" + args[1] + "§r does not exist.");
+                                sender.sendMessage("Material Â§o" + args[1] + "Â§r does not exist.");
                                 return true;
                             }
                         } catch (final NumberFormatException e) {
-                            sender.sendMessage("§o" + args[1] + "§r is not a valid material id.");
+                            sender.sendMessage("Â§o" + args[1] + "Â§r is not a valid material id.");
                             return true;
                         }
                     }
                     getFeature().getMosaicFeatureProperties().setSignBroadcastTool(m);
-                    sender.sendMessage("Sign broadcast tool set to §o" + m.name() + "§r.");
+                    sender.sendMessage("Sign broadcast tool set to Â§o" + m.name() + "Â§r.");
                 break;
                 }
                 return true;
