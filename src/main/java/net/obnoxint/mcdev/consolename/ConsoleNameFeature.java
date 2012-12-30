@@ -139,7 +139,7 @@ public final class ConsoleNameFeature implements MosaicFeature, Listener {
     }
 
     @Override
-    public void setFeatureActive(final boolean active) {
+    public void setMosaicFeatureActive(final boolean active) {
         if (this.active != active) {
             if (active) {
                 getMosaicFeatureProperties().load();

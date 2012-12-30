@@ -1,6 +1,6 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 1.14
+version: 1.15
 author: obnoxint
 depend: [Mosaic]
 commands:
