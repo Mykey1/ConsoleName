@@ -1,6 +1,5 @@
 package net.obnoxint.mcdev.consolename;
 
-import net.minecraft.server.v1_4_5.Packet130UpdateSign;
 import net.obnoxint.mcdev.mosaic.MosaicBase;
 import net.obnoxint.mcdev.mosaic.MosaicBase.MosaicLogger;
 import net.obnoxint.mcdev.mosaic.MosaicFeature;
@@ -16,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -84,13 +82,6 @@ public final class ConsoleNameFeature implements MosaicFeature, Listener {
             }
             if (!msg.isEmpty()) {
                 sendBroadcastMessage(BroadcastType.SIGN, getMosaicFeatureProperties().getPrefix(p), msg);
-                Bukkit.getScheduler().runTaskLaterAsynchronously(getMosaicFeaturePlugin(), new Runnable() {
-
-                    @Override
-                    public void run() {
-                        ((CraftPlayer) p).getHandle().netServerHandler.sendPacket(new Packet130UpdateSign(b.getX(), b.getY(), b.getZ(), s.getLines()));
-                    }
-                }, 50);
                 event.setCancelled(true);
             }
         }
