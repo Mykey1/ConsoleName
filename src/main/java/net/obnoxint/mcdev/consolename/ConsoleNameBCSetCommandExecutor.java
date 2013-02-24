@@ -7,26 +7,32 @@ import org.bukkit.entity.Player;
 
 final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
 
-    ConsoleNameBCSetCommandExecutor() {
-        super();
+    ConsoleNameBCSetCommandExecutor(final ConsoleName plugin) {
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+        final ConsoleNameConfiguration config = getPlugin().getConfiguration();
         String pre;
         if (args.length == 0) { // reset global prefix (no arguments)
-            if ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_GLOBAL) : true) {
-                getFeature().resetDefaultPrefix(sender, null);
+            if (sender instanceof Player) {
+                final Player player = (Player) sender;
+                if (player.hasPermission(ConsoleName.PERMISSION_SETPREFIX_GLOBAL)) {
+                    config.resetPrefix(player);
+                } else {
+                    player.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_GLOBAL.getName());
+                }
             } else {
-                sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_GLOBAL.getName());
+                config.resetPrefix();
             }
             return true;
         } else {
             if (args[0].equals("~") && sender instanceof Player) { // set or reset own per-player prefix (first argument is ~)
-                if (((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPREFIX_OWN)) {
-                    final Player player = (Player) sender;
+                final Player player = (Player) sender;
+                if (player.hasPermission(ConsoleName.PERMISSION_SETPREFIX_OWN)) {
                     if (args.length == 1) {
-                        getFeature().getMosaicFeatureProperties().setPrefix(player, null);
+                        config.setPrefix(player, null);
                         player.sendMessage("Your personal broadcast prefix has been removed.");
                     } else {
                         pre = "";
@@ -34,8 +40,8 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                             pre += args[i] + " ";
                         }
                         pre = pre.trim();
-                        getFeature().getMosaicFeatureProperties().setPrefix(player, pre);
-                        player.sendMessage("Your personal broadcast prefix has been set to: " + getFeature().getMosaicFeatureProperties().getPrefix(player));
+                        config.setPrefix(player, pre);
+                        player.sendMessage("Your personal broadcast prefix has been set to: " + config.getPrefix(player));
                     }
                 } else {
                     sender.sendMessage(ConsoleName.NO_PERMISSION_MSG + ConsoleName.PERMISSION_SETPREFIX_OWN.getName());
@@ -47,16 +53,16 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                     final Player targetPlayer = Bukkit.getPlayer(targetName);
                     if (targetPlayer != null) {
                         if (args.length == 1) {
-                            getFeature().resetDefaultPrefix(sender, targetPlayer);
+                            config.resetPrefix(targetPlayer);
+                            sender.sendMessage("Broadcast prefix of " + targetPlayer.getName() + " has been reset.");
                         } else {
                             pre = "";
                             for (int i = 1; i < args.length; i++) {
                                 pre += args[i] + " ";
                             }
                             pre = pre.trim();
-                            getFeature().getMosaicFeatureProperties().setPrefix(targetPlayer, pre);
-                            sender.sendMessage("Broadcast prefix of " + targetPlayer.getName() + " has been set to: "
-                                    + getFeature().getMosaicFeatureProperties().getPrefix(targetPlayer));
+                            config.setPrefix(targetPlayer, pre);
+                            sender.sendMessage("Broadcast prefix of " + targetPlayer.getName() + " has been set to: " + config.getPrefix(targetPlayer));
                         }
                         return true;
                     } else {
@@ -72,7 +78,7 @@ final class ConsoleNameBCSetCommandExecutor extends ConsoleNameCommandExecutor {
                     pre += args[i] + " ";
                 }
                 pre = pre.trim();
-                getFeature().getMosaicFeatureProperties().setPrefix(pre);
+                config.setPrefix(pre);
                 sender.sendMessage("Broadcast prefix set to: " + pre);
                 return true;
             } else {

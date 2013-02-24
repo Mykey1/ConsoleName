@@ -1,0 +1,10 @@
+chatFormatSymbol: '&'
+overrideSayCommand: true
+enableSignBroadcast: true
+signBroadcastToolId: 323
+
+prefix:
+  console: '&o&6[CONSOLE]&r'
+  default: '[&lHey&r, &2l&6i&9s&ct&de&5n&o!&r]&r'
+  player:
+    obnoxint: '&o[AUTHOR]&r'

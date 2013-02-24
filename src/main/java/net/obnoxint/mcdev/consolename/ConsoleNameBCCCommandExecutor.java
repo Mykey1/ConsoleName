@@ -23,8 +23,8 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
         return null;
     }
 
-    ConsoleNameBCCCommandExecutor() {
-        super();
+    ConsoleNameBCCCommandExecutor(final ConsoleName plugin) {
+        super(plugin);
     }
 
     @Override
@@ -32,7 +32,7 @@ final class ConsoleNameBCCCommandExecutor extends ConsoleNameCommandExecutor {
         if (args.length >= 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM) : true)) {
             final String[] split = parseBCCCommandArgs(args);
             if (split != null) {
-                getFeature().sendBroadcastMessage(split[0], split[1], true);
+                getPlugin().sendBroadcastMessage(split[0], split[1], true);
                 return true;
             }
         } else if (sender instanceof Player && !((Player) sender).hasPermission(ConsoleName.PERMISSION_SENDBROADCAST_CUSTOM)) {

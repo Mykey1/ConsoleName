@@ -26,7 +26,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
             }
         }
 
-        static PropertyAlias getByAlias(final String alias) {
+        private static PropertyAlias getByAlias(final String alias) {
             return aliasMap.get(alias.toLowerCase());
         }
 
@@ -37,8 +37,8 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
         }
     }
 
-    ConsoleNameBCPropCommandExecutor() {
-        super();
+    ConsoleNameBCPropCommandExecutor(final ConsoleName plugin) {
+        super(plugin);
     }
 
     @Override
@@ -46,22 +46,23 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
         if (args.length == 2 && ((sender instanceof Player) ? ((Player) sender).hasPermission(ConsoleName.PERMISSION_SETPROPERTY) : true)) {
             final PropertyAlias alias = PropertyAlias.getByAlias(args[0]);
             if (alias != null) {
+                final ConsoleNameConfiguration config = getPlugin().getConfiguration();
                 boolean b;
                 switch (alias) {
                 case CHAT_FORMAT_SYMBOL:
                     final String s = args[1];
-                    getFeature().getMosaicFeatureProperties().setChatFormatSymbol(s);
+                    config.setChatFormatSymbol(s);
                     sender.sendMessage("The new chat format symbol is \"" + s + "\".");
                 break;
                 case OVERRIDE_SAY_COMMAND:
                     b = Boolean.valueOf(args[1]);
-                    getFeature().getMosaicFeatureProperties().setOverrideSayCommand(b);
+                    config.setOverrideSayCommand(b);
                     sender.sendMessage("The 'say' command will" + ((!b) ? " not" : "") + " be overridden by the '" + COMMAND_BROADCAST + "' command.");
                 break;
                 case ENABLE_SIGN_BROADCAST:
                     b = Boolean.valueOf(args[1]);
-                    getFeature().getMosaicFeatureProperties().setEnableSignBroadcast(b);
-                    sender.sendMessage("Sending broadcasts by left-clicking signs with §o" + getFeature().getMosaicFeatureProperties().getSignBroadcastTool().name() + "§r is "
+                    config.setEnableSignBroadcast(b);
+                    sender.sendMessage("Sending broadcasts by left-clicking signs with §o" + config.getSignBroadcastTool().name() + "§r is "
                             + ((!b) ? "disabled." : "enabled. "));
                 break;
                 case SIGN_BROADCAST_TOOL:
@@ -80,7 +81,7 @@ final class ConsoleNameBCPropCommandExecutor extends ConsoleNameCommandExecutor 
                             return true;
                         }
                     }
-                    getFeature().getMosaicFeatureProperties().setSignBroadcastTool(m);
+                    config.setSignBroadcastTool(m);
                     sender.sendMessage("Sign broadcast tool set to §o" + m.name() + "§r.");
                 break;
                 }
