@@ -39,11 +39,13 @@ public final class ConsoleName extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        saveConfig();
+        configuration.writeConfig();
+        configuration.save();
     }
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         configuration = new ConsoleNameConfiguration(this);
 
         getServer().getPluginManager().registerEvents(this, this);
