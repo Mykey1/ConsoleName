@@ -27,6 +27,7 @@ public final class ConsoleNameConfiguration {
     private static final String CONFIG_KEY_SIGNBROADCASTTOOL = "signBroadcastTool";
     private static final String CONFIG_KEY_PREFIX_CONSOLE = CONFIG_PATH_PREFIX + ".console";
     private static final String CONFIG_KEY_PREFIX_DEFAULT = CONFIG_PATH_PREFIX + ".default";
+    private static final String CONFIG_KEY_UPDATECHECK = "updateCheck";
 
     private static final String CONFIG_DEFAULT_CHATFORMATSYMBOL = "&";
     private static final boolean CONFIG_DEFAULT_OVERRIDESAYCOMMAND = true;
@@ -34,6 +35,7 @@ public final class ConsoleNameConfiguration {
     private static final Material CONFIG_DEFAULT_SIGNBROADCASTTOOL = Material.SIGN;
     private static final String CONFIG_DEFAULT_PREFIX_CONSOLE = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[CONSOLE]" + ChatColor.RESET.toString() + ":";
     private static final String CONFIG_DEFAULT_PREFIX_DEFAULT = ChatColor.ITALIC.toString() + ChatColor.GOLD.toString() + "[BROADCAST]" + ChatColor.RESET.toString() + ":";
+    private static final boolean CONFIG_DEFAULT_UPDATECHECK = true;
 
     private final ConsoleName plugin;
     private final FileConfiguration config;
@@ -48,6 +50,8 @@ public final class ConsoleNameConfiguration {
     private final Map<UUID, String> prefixPlayers = new HashMap<UUID, String>();
     private String prefixConsole = CONFIG_DEFAULT_PREFIX_CONSOLE;
     private String prefixDefault = CONFIG_DEFAULT_PREFIX_DEFAULT;
+
+    private boolean updateCheck = true;
 
     ConsoleNameConfiguration(final ConsoleName plugin) {
         this.plugin = plugin;
@@ -79,6 +83,10 @@ public final class ConsoleNameConfiguration {
 
     public boolean isOverrideSayCommand() {
         return overrideSayCommand;
+    }
+
+    public boolean isUpdateCheck() {
+        return updateCheck;
     }
 
     public void load() {
@@ -117,6 +125,8 @@ public final class ConsoleNameConfiguration {
                 plugin.getLogger().warning("Invalid UUID: " + s);
             }
         }
+
+        setUpdateCheck(config.getBoolean(CONFIG_KEY_UPDATECHECK, CONFIG_DEFAULT_UPDATECHECK));
     }
 
     public void reload() {
@@ -201,6 +211,10 @@ public final class ConsoleNameConfiguration {
         if (uid != null && prefix != null && !prefix.isEmpty()) {
             prefixPlayers.put(uid, prefix);
         }
+    }
+
+    private void setUpdateCheck(final boolean updateCheck) {
+        this.updateCheck = updateCheck;
     }
 
 }

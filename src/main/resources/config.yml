@@ -8,3 +8,5 @@ prefix:
   default: '[&lHey&r, &2l&6i&9s&ct&de&5n&o!&r]&r'
   players:
     6b74aa73-6893-483f-8893-55a34cb08470: '&o[AUTHOR]&r' # Example. UUID of obnoxint.
+
+updateCheck: true

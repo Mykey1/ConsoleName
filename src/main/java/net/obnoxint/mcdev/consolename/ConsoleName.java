@@ -1,5 +1,9 @@
 package net.obnoxint.mcdev.consolename;
 
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateResult;
+import net.gravitydevelopment.updater.Updater.UpdateType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,6 +35,8 @@ public final class ConsoleName extends JavaPlugin implements Listener {
 
     private static final String CHAT_FORMAT_SYMBOL = "§";
 
+    private static final int PROJECT_ID = 31414;
+
     private ConsoleNameConfiguration configuration;
 
     public ConsoleNameConfiguration getConfiguration() {
@@ -55,6 +61,9 @@ public final class ConsoleName extends JavaPlugin implements Listener {
         getCommand(ConsoleNameCommandExecutor.COMMAND_BROADCAST_SETPREFIX).setExecutor(new ConsoleNameBCSetCommandExecutor(this));
         getCommand(ConsoleNameCommandExecutor.COMMAND_SETPROPERTY).setExecutor(new ConsoleNameBCPropCommandExecutor(this));
 
+        if (configuration.isUpdateCheck()) {
+            updateCheck();
+        }
     }
 
     public void sendBroadcastMessage(final CommandSender sender, final String message) {
@@ -123,4 +132,10 @@ public final class ConsoleName extends JavaPlugin implements Listener {
         return string.replace(configuration.getChatFormatSymbol(), CHAT_FORMAT_SYMBOL);
     }
 
+    private void updateCheck() {
+        final Updater updater = new Updater(this, PROJECT_ID, getFile(), UpdateType.NO_DOWNLOAD, false);
+        if (updater.getResult().equals(UpdateResult.UPDATE_AVAILABLE)) {
+            getLogger().info("An update is available. Please visit the project page for more information: " + getDescription().getWebsite());
+        }
+    }
 }
