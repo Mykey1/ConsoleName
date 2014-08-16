@@ -45,7 +45,6 @@ public final class ConsoleName extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         configuration = new ConsoleNameConfiguration(this);
-        System.out.print(replaceChatFormatSymbol("&1Hallo"));
 
         getServer().getPluginManager().registerEvents(this, this);
 
