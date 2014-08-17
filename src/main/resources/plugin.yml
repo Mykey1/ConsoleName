@@ -1,6 +1,6 @@
 name: ConsoleName
 main: net.obnoxint.mcdev.consolename.ConsoleName
-version: 2.4
+version: 2.5
 author: obnoxint
 website: http://dev.bukkit.org/bukkit-plugins/consolename
 commands:
